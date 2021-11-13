@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+	
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <Version>1.0</Version>
+    <Title>SuperHelper</Title>
+    <Description>Description of SuperHelper</Description>
+    <TargetExt>.gha</TargetExt>
+    <UseWpf>true</UseWpf>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Grasshopper" Version="6.12.19029.6381" IncludeAssets="compile;build" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  
+  <PropertyGroup Condition="$(Configuration) == 'Debug' AND $([MSBuild]::IsOSPlatform(Windows))">
+    <StartProgram>C:\Program Files\Rhino 7\System\Rhino.exe</StartProgram>
+    <StartArguments></StartArguments>
+    <StartAction>Program</StartAction>
+  </PropertyGroup>
+
+</Project>

@@ -53,7 +53,7 @@
         <TextBlock Grid.Row="0" Grid.Column="1" Text="Outputs" HorizontalAlignment="Center" FontWeight="Bold" FontSize="18" Margin="4"/>
         
         <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource ContentBorder}" Background="Transparent" CornerRadius="4" Margin="3">
-            <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
                 <ListBox BorderThickness="0"
                  ItemsSource="{Binding Converter={StaticResource ComponentInputConverter}, Mode=OneWay}">
                     <ListBox.ItemTemplate>
@@ -67,7 +67,7 @@
         </Border>
 
         <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource ContentBorder}" Background="Transparent" CornerRadius="4" Margin="3">
-            <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
                 <ListBox BorderThickness="0"
                  ItemsSource="{Binding Converter={StaticResource ComponentOutputConverter}, Mode=OneWay}">
                     <ListBox.ItemTemplate>

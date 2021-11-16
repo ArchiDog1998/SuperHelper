@@ -1,0 +1,78 @@
+﻿<UserControl x:Class="SuperHelper.GHStructureInfoControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SuperHelper"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Dictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <local:StructureDataConverter x:Key="StructureDataConverter"/>
+            <local:PathNameConverter x:Key="PathNameConverter"/>
+            <local:PathCountConverter x:Key="PathCountConverter"/>
+            <local:IndexGooConverter x:Key="IndexGooConverter"/>
+            <local:IndexGooItemConverter x:Key="IndexGooItemConverter"/>
+            <local:MinusFortyFiveConverter x:Key="MinusFortyFiveConverter"/>
+            <local:MinusMoreConverter x:Key="MinusMoreConverter"/>
+            <local:StructureBriefConverter x:Key="StructureBriefConverter"/>
+            <local:IndexGooDescConverter x:Key="IndexGooDescConverter"/>
+
+            <Style TargetType="TreeView">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding DataCount}" Value="0">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+
+    </UserControl.Resources>
+
+
+
+    <Border Style="{StaticResource ContentBorder}">
+
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="{Binding Converter={StaticResource ResourceKey=StructureBriefConverter}, Mode=OneWay}"
+                   HorizontalAlignment="Center" FontWeight="Bold"/>
+            <TreeView x:Name="treeView" Background="Transparent" MaxHeight="400" BorderThickness="0" TreeViewItem.Selected="TreeViewItem_Selected"
+                  ItemsSource="{Binding Converter={StaticResource ResourceKey=StructureDataConverter}, Mode=OneWay}">
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding ListItems}">
+
+                        <DockPanel Width="{Binding ActualWidth, ElementName=treeView, Mode=OneWay, Converter={StaticResource MinusFortyFiveConverter}}"
+                                   MinWidth="100" Margin="0 3 0 3">
+                            <TextBlock Text="{Binding Converter={StaticResource ResourceKey=PathNameConverter}, Mode=OneWay}"
+                                       DockPanel.Dock="Left"/>
+                            <TextBlock Text="{Binding Converter={StaticResource ResourceKey=PathCountConverter}, Mode=OneWay}"
+                                       DockPanel.Dock="Right" HorizontalAlignment="Right" Foreground="DimGray"/>
+                        </DockPanel>
+
+
+                        <HierarchicalDataTemplate.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal"  MinWidth="81" ToolTip="{Binding Converter={StaticResource ResourceKey=IndexGooDescConverter}, Mode=OneWay}"
+                                            Width="{Binding ActualWidth, ElementName=treeView, Mode=OneWay, Converter={StaticResource MinusMoreConverter}}">
+                                        <TextBlock Text="{Binding Converter={StaticResource ResourceKey=IndexGooConverter}, Mode=OneWay}"
+                                               VerticalAlignment="Center" Foreground="DimGray"/>
+                                        <Rectangle VerticalAlignment="Stretch" Width="1" Margin="6 0 6 0" Stroke="Silver" />
+                                        <TextBlock Text="{Binding Converter={StaticResource ResourceKey=IndexGooItemConverter}, Mode=OneWay}"
+                                               VerticalAlignment="Center"/>
+                                    </StackPanel>
+
+                            </DataTemplate>
+                        </HierarchicalDataTemplate.ItemTemplate>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+        </StackPanel>
+
+
+
+    </Border>
+
+</UserControl>

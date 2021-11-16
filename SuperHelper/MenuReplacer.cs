@@ -17,37 +17,45 @@ namespace SuperHelper
     {
         private static readonly string _name = "urls.json";
 
-        private static Dictionary<string, string> _urlDict = new Dictionary<string, string>();
+        internal static Dictionary<string, string> UrlDict = new Dictionary<string, string>();
+
+
+        internal static SuperHelperWindow _window = new SuperHelperWindow();
 
         protected MenuReplacer(IGH_InstanceDescription tag) : base(tag)
         {
         }
 
-        public static bool Init()
+        internal static void SaveToJson()
         {
             JavaScriptSerializer ser = new JavaScriptSerializer();
+            File.WriteAllText(Path.Combine(Path.GetDirectoryName(typeof(MenuReplacer).Assembly.Location), _name),
+                ser.Serialize(UrlDict));
+        }
 
-            //var save = new Dictionary<string, string>()
-            //{
-            //    {"807b86e3-be8d-4970-92b5-f8cdcb45b06b", "http://100-gh.com/1665762" },
-            //    {"47886835-e3ff-4516-a3ed-1b419f055464", "http://100-gh.com/1665763" }
-            //};
-
-            //File.WriteAllText(Path.Combine(Path.GetDirectoryName(typeof(MenuReplacer).Assembly.Location), _name),
-            //    ser.Serialize(save));
+        public static bool Init()
+        {
 
             //Read from json.
             try
             {
-                string jsonStr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(typeof(MenuReplacer).Assembly.Location), _name));
-                _urlDict = ser.Deserialize<Dictionary<string, string>>(jsonStr);
+                string fullName = Path.Combine(Path.GetDirectoryName(typeof(MenuReplacer).Assembly.Location), _name);
+                if (File.Exists(fullName))
+                {
+                    string jsonStr = File.ReadAllText(fullName);
+                    JavaScriptSerializer ser = new JavaScriptSerializer();
+                    UrlDict = ser.Deserialize<Dictionary<string, string>>(jsonStr);
+                }
+                else
+                {
+                    UrlDict = new Dictionary<string, string>();
+                }
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
-
-
 
             return ExchangeMethod(
                 typeof(GH_DocumentObject).GetRuntimeMethods().Where(m => m.Name.Contains("Menu_ObjectHelpClick")).First(),
@@ -87,21 +95,45 @@ namespace SuperHelper
 
         private void Menu_ObjectHelpClickNew(object sender, EventArgs e)
         {
+            Instances.ActiveCanvas.DocumentObjectMouseDown -= ActiveCanvas_DocumentObjectMouseDown;
+            Instances.ActiveCanvas.DocumentObjectMouseDown += ActiveCanvas_DocumentObjectMouseDown;
 
-            if (_urlDict.ContainsKey(this.ComponentGuid.ToString()))
+            SetOneObject(this);
+            _window.Show();
+
+        }
+
+        private void SetOneObject(GH_DocumentObject obj)
+        {
+            _window.DataContext = null;
+            _window.DataContext = obj;
+
+            //Set Urls
+            _window.oldUrl.Navigate("about:blank");
+            _window.oldUrl.Document.OpenNew(false);
+
+            string html = (string)typeof(GH_DocumentObject).GetRuntimeMethods().Where(m => m.Name.Contains("HtmlHelp_Source")).First().Invoke(obj, new object[0]);
+
+            _window.oldUrl.Document.Write(html);
+            _window.oldUrl.Refresh();
+
+            if (obj != null && UrlDict.ContainsKey(obj.ComponentGuid.ToString()))
             {
-                new SuperHelperWindow(this, _urlDict[this.ComponentGuid.ToString()]).Show();
+                string url = UrlDict[obj.ComponentGuid.ToString()];
+                _window.UrlTextBox.Text = url;
+                _window.myWeb.Source = new Uri(url);
+
             }
             else
             {
-                GH_HtmlHelpPopup gH_HtmlHelpPopup = new GH_HtmlHelpPopup();
-                if (gH_HtmlHelpPopup.LoadObject(this))
-                {
-                    gH_HtmlHelpPopup.SetLocation(Cursor.Position);
-                    gH_HtmlHelpPopup.Show(Instances.DocumentEditor);
-                }
-            }
+                _window.UrlTextBox.Text = "";
+                _window.myWeb.Source = null;
+            } 
+        }
 
+        internal void ActiveCanvas_DocumentObjectMouseDown(object sender, Grasshopper.GUI.GH_CanvasObjectMouseDownEventArgs e)
+        {
+            SetOneObject((GH_DocumentObject)e.Object.Object.Attributes.GetTopLevel.DocObject);
         }
     }
 }

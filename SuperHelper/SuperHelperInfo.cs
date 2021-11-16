@@ -16,15 +16,15 @@ namespace SuperHelper
         public override Bitmap Icon => null;
 
         //Return a short string describing the purpose of this GHA library.
-        public override string Description => "";
+        public override string Description => "Much better helper for grasshopper";
 
         public override Guid Id => new Guid("A71D5B0A-9D5B-4E27-8933-BB83CB68066D");
 
         //Return a string identifying you or your company.
-        public override string AuthorName => "";
+        public override string AuthorName => "秋水";
 
         //Return a string representing your preferred contact details.
-        public override string AuthorContact => "";
+        public override string AuthorContact => "1123993881@qq.com";
 
         public override string Version => "0.9.0";
     }

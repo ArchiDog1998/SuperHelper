@@ -4,9 +4,68 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SuperHelper"
+        xmlns:wf ="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+        xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
         mc:Ignorable="d" Topmost="True" WindowStartupLocation="CenterScreen"
-        Title="SuperHelper" Height="600" Width="700">
-    <Grid>
-        <WebBrowser x:Name="myWeb"/>
-    </Grid>
+        Height="600" Width="700">
+
+    <Window.Resources>
+        <local:WindowNameConverter x:Key="WindowNameConverter"/>
+        <local:ObjectNameConverter x:Key="ObjectNameConverter"/>
+        <local:WindowIconConverter x:Key="WindowIconConverter"/>
+        <local:TypeInfoConverter x:Key="TypeInfoConverter"/>
+        <local:TypeLoactionConverter x:Key="TypeLoactionConverter"/>
+        <local:ObjectDescriptionConverter x:Key="ObjectDescriptionConverter"/>
+    </Window.Resources>
+
+    <Window.Title>
+        <Binding Converter="{StaticResource WindowNameConverter}" Mode="OneWay"/>
+    </Window.Title>
+    <Window.Icon>
+        <Binding Converter="{StaticResource WindowIconConverter}" Mode="OneWay"/>
+    </Window.Icon>
+
+    <TabControl>
+        <TabItem Header="Origin Help">
+            <wfi:WindowsFormsHost>
+                <wf:WebBrowser x:Name="oldUrl"/>
+            </wfi:WindowsFormsHost>
+        </TabItem>
+        
+        <TabItem Header="URL Help">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <Label Grid.Row="0" Grid.Column="0" Content="Default Url: "/>
+                <TextBox Grid.Row="0" Grid.Column="1" x:Name="UrlTextBox" Margin="0 0 3 0"/>
+                <Button Grid.Row="0" Grid.Column="2" Content="Save and Go" Click="SaveClick"/>
+                <WebBrowser Grid.Row="1" Grid.Column="0"  Grid.ColumnSpan="3" x:Name="myWeb"/>
+            </Grid>
+        </TabItem>
+
+        <TabItem Header="Params Help">
+            <local:DocumentObjectInfoControl DataContext="{Binding Mode=OneWay}"/>
+        </TabItem>
+
+        <TabItem Header="Development Help">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding Converter={StaticResource TypeInfoConverter}, Mode=OneWay}"
+                           HorizontalAlignment="Center"/>
+                <Button Content ="{Binding Converter={StaticResource TypeLoactionConverter}, Mode=OneWay}"
+                        Click="OpenFileClick" ToolTip="Click to open File" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </TabItem>
+        <!--<TabItem Header="Settings">
+            
+        </TabItem>-->
+    </TabControl>
 </Window>

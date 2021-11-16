@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="SuperHelper.InstanceDescControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SuperHelper"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Dictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <local:ObjectNameConverter x:Key="ObjectNameConverter"/>
+            <local:WindowIconConverter x:Key="WindowIconConverter"/>
+            <local:ObjectDescriptionConverter x:Key="ObjectDescriptionConverter"/>
+            <local:IsNotParamConverter x:Key="IsNotParamConverter"/>
+            <local:GetRuntimeConverter x:Key="GetRuntimeConverter"/>
+            <local:GetRunTimeSpanConverter x:Key="GetRunTimeSpanConverter"/>
+        </ResourceDictionary>
+
+    </UserControl.Resources>
+
+    <DockPanel>
+        <DockPanel HorizontalAlignment="Center" DockPanel.Dock="Top">
+            <Image Source="{Binding Converter={StaticResource WindowIconConverter}, Mode=OneWay}"
+                   DockPanel.Dock="Left" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Width="24" Height="24"/>
+
+            <TextBlock Text="{Binding Converter={StaticResource ObjectNameConverter}, Mode=OneWay}"
+                       Margin="6 0 0 2"
+                       DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Center"
+                       FontWeight="Bold" FontSize="20"
+                       ToolTip="{Binding Converter={StaticResource GetRunTimeSpanConverter}}"/>
+        </DockPanel>
+
+        <Border DockPanel.Dock="Bottom" Style="{StaticResource ContentBorder}">
+            <TextBlock Text="{Binding Converter={StaticResource ObjectDescriptionConverter}, Mode=OneWay}"/>
+        </Border>
+
+            <TextBlock Text="{Binding InstanceDescription}" HorizontalAlignment="Center"
+                   Visibility="{Binding Converter={StaticResource IsNotParamConverter}, Mode=OneWay}"
+                   ToolTip="{Binding Converter={StaticResource GetRuntimeConverter}, Mode=OneWay}"/>
+
+    </DockPanel>
+</UserControl>

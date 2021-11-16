@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="SuperHelper.ComponentInfoControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SuperHelper"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Dictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <local:ComponentInputConverter x:Key="ComponentInputConverter"/>
+            <local:ComponentOutputConverter x:Key="ComponentOutputConverter"/>
+            
+            <Style TargetType="ListBoxItem">
+                <Setter Property="Focusable" Value="False"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListBoxItem">
+                            <StackPanel>
+                                <Separator x:Name="Separator" Background="DimGray" Margin="2"/>
+                                <ContentPresenter/>
+                            </StackPanel>
+                            <ControlTemplate.Triggers>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource PreviousData}}" Value="{x:Null}">
+                                    <Setter Property="Visibility" TargetName="Separator" Value="Collapsed"/>
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Inputs" HorizontalAlignment="Center" FontWeight="Bold" FontSize="18" Margin="4"/>
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="Outputs" HorizontalAlignment="Center" FontWeight="Bold" FontSize="18" Margin="4"/>
+        
+        <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource ContentBorder}" Background="Transparent" CornerRadius="4" Margin="3">
+            <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ListBox BorderThickness="0"
+                 ItemsSource="{Binding Converter={StaticResource ComponentInputConverter}, Mode=OneWay}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <local:DocumentObjectInfoControl DataContext="{Binding Mode=OneWay}" HorizontalAlignment="Stretch" Margin="10"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                </ListBox>
+            </ScrollViewer>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource ContentBorder}" Background="Transparent" CornerRadius="4" Margin="3">
+            <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ListBox BorderThickness="0"
+                 ItemsSource="{Binding Converter={StaticResource ComponentOutputConverter}, Mode=OneWay}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <local:DocumentObjectInfoControl DataContext="{Binding Mode=OneWay}" HorizontalAlignment="Stretch" Margin="10"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                </ListBox>
+            </ScrollViewer>
+        </Border>
+
+    </Grid>
+</UserControl>

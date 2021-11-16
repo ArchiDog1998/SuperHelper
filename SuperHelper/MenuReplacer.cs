@@ -22,6 +22,8 @@ namespace SuperHelper
 
         internal static SuperHelperWindow _window = new SuperHelperWindow();
 
+        internal static bool _windowShown = false;
+
         protected MenuReplacer(IGH_InstanceDescription tag) : base(tag)
         {
         }
@@ -56,6 +58,8 @@ namespace SuperHelper
             {
                 MessageBox.Show(ex.Message);
             }
+
+            Instances.ActiveCanvas.DocumentObjectMouseDown += ActiveCanvas_DocumentObjectMouseDown;
 
             return ExchangeMethod(
                 typeof(GH_DocumentObject).GetRuntimeMethods().Where(m => m.Name.Contains("Menu_ObjectHelpClick")).First(),
@@ -95,15 +99,14 @@ namespace SuperHelper
 
         private void Menu_ObjectHelpClickNew(object sender, EventArgs e)
         {
-            Instances.ActiveCanvas.DocumentObjectMouseDown -= ActiveCanvas_DocumentObjectMouseDown;
-            Instances.ActiveCanvas.DocumentObjectMouseDown += ActiveCanvas_DocumentObjectMouseDown;
 
             SetOneObject(this);
+            _windowShown = true;
             _window.Show();
 
         }
 
-        private void SetOneObject(GH_DocumentObject obj)
+        private static void SetOneObject(GH_DocumentObject obj)
         {
             _window.DataContext = null;
             _window.DataContext = obj;
@@ -131,9 +134,10 @@ namespace SuperHelper
             } 
         }
 
-        internal void ActiveCanvas_DocumentObjectMouseDown(object sender, Grasshopper.GUI.GH_CanvasObjectMouseDownEventArgs e)
+        internal static void ActiveCanvas_DocumentObjectMouseDown(object sender, Grasshopper.GUI.GH_CanvasObjectMouseDownEventArgs e)
         {
-            SetOneObject((GH_DocumentObject)e.Object.Object.Attributes.GetTopLevel.DocObject);
+            if (_windowShown)
+                SetOneObject((GH_DocumentObject)e.Object.Object.Attributes.GetTopLevel.DocObject);
         }
     }
 }

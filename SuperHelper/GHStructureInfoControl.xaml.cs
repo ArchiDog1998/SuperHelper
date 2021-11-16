@@ -82,7 +82,7 @@ namespace SuperHelper
 
             IGH_Goo goo = ((IndexGoo)value).Data;
 
-            string result = $"Type Name : {goo.TypeName}\n Type Description : {goo.TypeDescription}\n Is Valid : {goo.IsValid}";
+            string result = $"Type Name : {goo.TypeName}\nType Description : {goo.TypeDescription}\nIs Valid : {goo.IsValid}";
             if (!goo.IsValid) result += $"Why not Valid : {goo.IsValidWhyNot}";
             return result;
 

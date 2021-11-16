@@ -34,6 +34,7 @@ namespace SuperHelper
         protected override void OnClosed(EventArgs e)
         {
             MenuReplacer._window = new SuperHelperWindow();
+            MenuReplacer._windowShown = false;
             base.OnClosed(e);
         }
 

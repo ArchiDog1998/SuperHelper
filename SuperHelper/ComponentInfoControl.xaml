@@ -23,7 +23,7 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="ListBoxItem">
                             <StackPanel>
-                                <Separator x:Name="Separator" Background="DimGray" Margin="2"/>
+                                <Separator x:Name="Separator" Background="Silver" Margin="2"/>
                                 <ContentPresenter/>
                             </StackPanel>
                             <ControlTemplate.Triggers>

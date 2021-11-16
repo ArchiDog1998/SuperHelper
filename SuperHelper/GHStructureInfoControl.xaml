@@ -28,6 +28,9 @@
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
+            <Style TargetType="TreeViewItem">
+                <Setter Property="IsExpanded" Value="True"/>
+            </Style>
         </ResourceDictionary>
 
     </UserControl.Resources>

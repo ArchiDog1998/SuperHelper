@@ -170,6 +170,25 @@ namespace SuperHelper
         }
     }
 
+    [ValueConversion(typeof(IGH_Structure), typeof(bool))]
+    public class ItemExpandedThanConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return null;
+
+            IGH_Structure structure = (IGH_Structure)value;
+
+            return structure.PathCount < 15 && structure.DataCount < 100;
+
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
+
     [ValueConversion(typeof(IGH_Structure), typeof(string))]
     public class StructureBriefConverter : IValueConverter
     {

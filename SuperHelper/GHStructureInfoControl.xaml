@@ -20,16 +20,22 @@
             <local:MinusMoreConverter x:Key="MinusMoreConverter"/>
             <local:StructureBriefConverter x:Key="StructureBriefConverter"/>
             <local:IndexGooDescConverter x:Key="IndexGooDescConverter"/>
+            <local:ItemExpandedThanConverter x:Key="ItemExpandedThanConverter"/>
 
             <Style TargetType="TreeView">
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding DataCount}" Value="0">
                         <Setter Property="Visibility" Value="Collapsed"/>
                     </DataTrigger>
+
                 </Style.Triggers>
+                <Setter Property="MaxHeight" Value=" 400"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Background" Value="Transparent"/>
             </Style>
             <Style TargetType="TreeViewItem">
-                <Setter Property="IsExpanded" Value="True"/>
+                <Setter Property="IsExpanded" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TreeView}, Path=DataContext,
+                                Converter={StaticResource ResourceKey=ItemExpandedThanConverter}, Mode=OneWay}"/>
             </Style>
         </ResourceDictionary>
 
@@ -42,8 +48,9 @@
         <StackPanel Orientation="Vertical">
             <TextBlock Text="{Binding Converter={StaticResource ResourceKey=StructureBriefConverter}, Mode=OneWay}"
                    HorizontalAlignment="Center" FontWeight="Bold"/>
-            <TreeView x:Name="treeView" Background="Transparent" MaxHeight="400" BorderThickness="0" TreeViewItem.Selected="TreeViewItem_Selected"
+            <TreeView x:Name="treeView" TreeViewItem.Selected="TreeViewItem_Selected" ScrollViewer.CanContentScroll="True"
                   ItemsSource="{Binding Converter={StaticResource ResourceKey=StructureDataConverter}, Mode=OneWay}">
+
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding ListItems}">
 

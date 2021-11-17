@@ -27,6 +27,14 @@ namespace SuperHelper
         {
             InitializeComponent();
         }
+
+        private void ShowMoreClick(object sender, RoutedEventArgs e)
+        {
+            ShowBorder.Visibility = Visibility.Collapsed;
+
+            SourceTexts.Visibility = Visibility.Visible;
+            StrucureInfo.Visibility = Visibility.Visible;
+        }
     }
 
     [ValueConversion(typeof(IGH_Param), typeof(IGH_Structure))]

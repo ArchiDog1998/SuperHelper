@@ -8,8 +8,8 @@
     <TargetExt>.gha</TargetExt>
     <UseWpf>true</UseWpf>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AssemblyVersion>0.9.0.0</AssemblyVersion>
-    <FileVersion>0.9.0.0</FileVersion>
+    <AssemblyVersion>0.9.1.0</AssemblyVersion>
+    <FileVersion>0.9.1.0</FileVersion>
     <Authors>秋水</Authors>
     <PackageIcon>SuperHelperIcon_128.png</PackageIcon>
   </PropertyGroup>

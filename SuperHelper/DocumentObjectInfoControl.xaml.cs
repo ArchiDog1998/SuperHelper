@@ -2,6 +2,7 @@
 using Grasshopper.Kernel.Data;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -29,17 +30,13 @@ namespace SuperHelper
         }
     }
 
-    [ValueConversion(typeof(IGH_DocumentObject), typeof(Visibility))]
+    [ValueConversion(typeof(IGH_DocumentObject), typeof(bool))]
     public class IsParamConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null) return Visibility.Collapsed;
-            if( value is IGH_Param)
-            {
-                return Visibility.Visible;
-            }
-            return Visibility.Collapsed;
+            if (value == null) return false;
+            return value is IGH_Param;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -48,17 +45,13 @@ namespace SuperHelper
         }
     }
 
-    [ValueConversion(typeof(IGH_DocumentObject), typeof(Visibility))]
+    [ValueConversion(typeof(IGH_DocumentObject), typeof(bool))]
     public class IsComponentConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null) return Visibility.Collapsed;
-            if (value is IGH_Component)
-            {
-                return Visibility.Visible;
-            }
-            return Visibility.Collapsed;
+            if (value == null) return false;
+            return value is IGH_Component;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -7,15 +7,22 @@
         xmlns:wf ="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
         mc:Ignorable="d" Topmost="True" WindowStartupLocation="CenterScreen"
+        x:Name="Father"
         Height="600" Width="700">
 
     <Window.Resources>
-        <local:WindowNameConverter x:Key="WindowNameConverter"/>
-        <local:ObjectNameConverter x:Key="ObjectNameConverter"/>
-        <local:WindowIconConverter x:Key="WindowIconConverter"/>
-        <local:TypeInfoConverter x:Key="TypeInfoConverter"/>
-        <local:TypeLoactionConverter x:Key="TypeLoactionConverter"/>
-        <local:ObjectDescriptionConverter x:Key="ObjectDescriptionConverter"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Dictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <local:WindowNameConverter x:Key="WindowNameConverter"/>
+            <local:ObjectNameConverter x:Key="ObjectNameConverter"/>
+            <local:WindowIconConverter x:Key="WindowIconConverter"/>
+            <local:TypeInfoConverter x:Key="TypeInfoConverter"/>
+            <local:TypeLoactionConverter x:Key="TypeLoactionConverter"/>
+            <local:ObjectDescriptionConverter x:Key="ObjectDescriptionConverter"/>
+
+        </ResourceDictionary>
     </Window.Resources>
 
     <Window.Title>
@@ -59,13 +66,69 @@
         <TabItem Header="Development Help">
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="{Binding Converter={StaticResource TypeInfoConverter}, Mode=OneWay}"
-                           HorizontalAlignment="Center"/>
+                           HorizontalAlignment="Center" MouseRightButtonDown="TextBlock_MouseDown"
+                           ToolTip="Right click to save the class name to the ClipBoard."/>
                 <Button Content ="{Binding Converter={StaticResource TypeLoactionConverter}, Mode=OneWay}"
+                         Template="{StaticResource CornerButtonTemplate}"
                         Click="OpenFileClick" ToolTip="Click to open File" HorizontalAlignment="Center"/>
             </StackPanel>
         </TabItem>
-        <!--<TabItem Header="Settings">
+        <TabItem Header="Settings">
+            <DockPanel>
+                <Border DockPanel.Dock="Top" Style="{StaticResource ContentBorder}" CornerRadius="5" Margin="5" Padding="5">
+                    <Grid >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Auto Target: "
+                           ToolTip="Click DocumentObject to switch the helper's target."/>
+
+                        <CheckBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"
+                          IsChecked="{Binding ElementName=Father, Path=AutoTarget, Mode=TwoWay}"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Highlight Width: "
+                           ToolTip="Change the highlight preview wire width."/>
+                        <DockPanel Grid.Row="2" Grid.Column="1">
+                            <TextBlock DockPanel.Dock="Right" HorizontalAlignment="Center" Width="40" Text="{Binding ElementName=widthSlider, Path=Value, Mode=OneWay}"/>
+                            <Slider x:Name="widthSlider" Minimum="1" Maximum="15" Value="{Binding ElementName=Father, Path=DisplayWireWidth, Mode=TwoWay}"/>
+                        </DockPanel>
+                    </Grid>
+                </Border>
+
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel  Grid.Column="0" Grid.Row="0"  Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" FontWeight="Bold" Text="Wire Color" Margin="0 0 5 0"/>
+                        <Button Content="(Reset Color)" HorizontalAlignment="Center" Click="LeftResetClick" Background="Transparent" BorderThickness="0"/>
+                    </StackPanel>
+                    <WindowsFormsHost Grid.Column="0" Grid.Row="1" x:Name="LeftColor" MaxWidth="270" Padding="10"/>
+
+                    <StackPanel  Grid.Column="1" Grid.Row="0"  Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" FontWeight="Bold" Text="Material Color" Margin="0 0 5 0"/>
+                        <Button Content="(Reset Color)" HorizontalAlignment="Center" Click="RightResetClick" Background="Transparent" BorderThickness="0"/>
+                    </StackPanel>
+                    <WindowsFormsHost Grid.Column="1" Grid.Row="1" x:Name="RightColor" MaxWidth="270" Padding="10"/>
+                </Grid>
+            </DockPanel>
+
             
-        </TabItem>-->
+        </TabItem>
     </TabControl>
 </Window>

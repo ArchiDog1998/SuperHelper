@@ -4,23 +4,40 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SuperHelper"
-             mc:Ignorable="d" 
+             mc:Ignorable="d" x:Name="Father"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <local:ParamDatasConverter x:Key="ParamDatasConverter"/>
         <local:IsParamConverter x:Key="IsParamConverter"/>
         <local:IsComponentConverter x:Key="IsComponentConverter"/>
     </UserControl.Resources>
-    
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <local:InstanceDescControl Grid.Row="0" DataContext="{Binding Mode=OneWay}"/>
-        <local:ComponentInfoControl Grid.Row="1" DataContext="{Binding Mode=OneWay}"
-                                    Visibility="{Binding Converter={StaticResource IsComponentConverter}, Mode=OneWay}"/>
-        <local:ParamInfoControl Grid.Row="1" DataContext="{Binding Mode=OneWay}"
-                                Visibility="{Binding Converter={StaticResource IsParamConverter}, Mode=OneWay}"/>
-    </Grid>
+
+    <DockPanel>
+        <local:InstanceDescControl  DockPanel.Dock="Top" DataContext="{Binding Mode=OneWay}"/>
+        <ContentControl>
+            <ContentControl.Style>
+                <Style TargetType="ContentControl">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Converter={StaticResource IsParamConverter}, Mode=OneWay}" Value="True">
+                            <Setter Property="Content">
+                                <Setter.Value>
+                                    <local:ParamInfoControl/>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding Converter={StaticResource IsComponentConverter}, Mode=OneWay}" Value="True">
+                            <Setter Property="Content">
+                                <Setter.Value>
+                                    <local:ComponentInfoControl/>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
+
+
+    </DockPanel>
 </UserControl>

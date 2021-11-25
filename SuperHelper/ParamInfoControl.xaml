@@ -11,23 +11,42 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Dictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <local:ParamDatasConverter x:Key="ParamDatasConverter"/>
+
             <local:ParamSourcesConverter x:Key="ParamSourcesConverter"/>
+            <local:ParamDatasConverter x:Key="ParamDatasConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
-    <StackPanel Orientation="Vertical">
-        <Border Style="{StaticResource ContentBorder}"  x:Name="ShowBorder">
-            <StackPanel>
-                <Border Style="{StaticResource ContentBorder}" HorizontalAlignment="Center" Background="White">
-                    <Button Content="Show More" HorizontalAlignment="Center" Click="ShowMoreClick" BorderThickness="0"
-                            Background="Transparent"/>
-                </Border>
-                <TextBlock Text="{Binding InstanceDescription}" Margin="10 0 10 0"/>
-            </StackPanel>
 
-        </Border>
-        <TextBlock x:Name="SourceTexts" Text="{Binding Converter={StaticResource ParamSourcesConverter}, Mode=OneWay}" HorizontalAlignment="Center" Visibility="Collapsed"/>
-        <local:GHStructureInfoControl x:Name="StrucureInfo" DataContext="{Binding Converter={StaticResource ParamDatasConverter}, Mode=OneWay}" Visibility="Collapsed"/>
+    <Border Style="{StaticResource ContentBorder}">
+        <StackPanel>
+            <Button x:Name="ShowButton" Content="Show Hierarchy" ToolTip="Click to show in TreeView."
+                    Tag="False" Click="Button_Click" Template="{StaticResource CornerButtonTemplate}"/>
+            <ContentControl>
+                <ContentControl.Style>
+                    <Style TargetType="ContentControl">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=ShowButton, Path=Tag, Mode=OneWay}" Value="False">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <TextBlock Text="{Binding InstanceDescription}" Margin="10 0 10 0"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
 
-    </StackPanel>
+                            <DataTrigger Binding="{Binding ElementName=ShowButton, Path=Tag, Mode=OneWay}" Value="True">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <DockPanel>
+                                            <TextBlock DockPanel.Dock="Top" Text="{Binding Converter={StaticResource ParamSourcesConverter}, Mode=OneWay}" HorizontalAlignment="Center"/>
+                                            <local:GHStructureInfoControl DataContext="{Binding Converter={StaticResource ParamDatasConverter}, Mode=OneWay}"/>
+                                        </DockPanel>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+        </StackPanel>
+    </Border>
 </UserControl>

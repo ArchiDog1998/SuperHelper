@@ -13,6 +13,11 @@
     <Authors>秋水</Authors>
     <PackageIcon>SuperHelperIcon_128.png</PackageIcon>
   </PropertyGroup>
+	
+  <ItemGroup>
+    <None Remove="AlipayImage.jpg" />
+    <None Remove="WeChatPayImage.jpg" />
+  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="Grasshopper" Version="6.12.19029.6381" IncludeAssets="compile;build" />

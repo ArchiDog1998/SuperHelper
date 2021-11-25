@@ -38,7 +38,8 @@ namespace SuperHelper
             if (tvi == null || e.Handled) return;
 
             tvi.IsExpanded = !tvi.IsExpanded;
-            if (tvi.HasItems) tvi.IsSelected = false;
+            tvi.IsSelected = false;
+
             e.Handled = true;
         }
     }
@@ -81,6 +82,7 @@ namespace SuperHelper
             if (value == null) return "";
 
             IGH_Goo goo = ((IndexGoo)value).Data;
+            if(goo == null) return null;
 
             string result = $"Type Name : {goo.TypeName}\nType Description : {goo.TypeDescription}\nIs Valid : {goo.IsValid}";
             if (!goo.IsValid) result += $"Why not Valid : {goo.IsValidWhyNot}";
@@ -94,43 +96,6 @@ namespace SuperHelper
         }
     }
 
-    [ValueConversion(typeof(IndexGoo), typeof(string))]
-    public class IndexGooItemConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value == null) return "";
-
-            IndexGoo indexGoo = (IndexGoo)value;
-
-            return indexGoo.Data.ToString();
-
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
-        }
-    }
-
-    [ValueConversion(typeof(IndexGoo), typeof(string))]
-    public class IndexGooConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value == null) return "";
-
-            IndexGoo indexGoo = (IndexGoo)value;
-
-            return indexGoo.Index.ToString();
-
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
-        }
-    }
 
     [ValueConversion(typeof(StructureList), typeof(string))]
     public class PathCountConverter : IValueConverter
@@ -151,24 +116,7 @@ namespace SuperHelper
         }
     }
 
-    [ValueConversion(typeof(StructureList), typeof(string))]
-    public class PathNameConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value == null) return "";
 
-            StructureList structureList = (StructureList)value;
-
-            return structureList.Path.ToString(true);
-
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
-        }
-    }
 
     [ValueConversion(typeof(IGH_Structure), typeof(bool))]
     public class ItemExpandedThanConverter : IValueConverter
@@ -189,6 +137,7 @@ namespace SuperHelper
         }
     }
 
+
     [ValueConversion(typeof(IGH_Structure), typeof(string))]
     public class StructureBriefConverter : IValueConverter
     {
@@ -196,7 +145,7 @@ namespace SuperHelper
         {
             if (value == null) return null;
 
-            IGH_Structure structure = (IGH_Structure)value;
+             IGH_Structure structure = (IGH_Structure)value;
 
 
             if (structure.DataCount == 0)
@@ -262,28 +211,9 @@ namespace SuperHelper
         }
 
         /// <inheritdoc/>
-        public object ConvertBack(
-            object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotSupportedException("Cannot convert back");
+            return null;
         }
     }
-
-    [ValueConversion(typeof(double), typeof(double))]
-    public class MinusMoreConverter : IValueConverter
-    {
-        /// <inheritdoc/>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return (double)value - 64;
-        }
-
-        /// <inheritdoc/>
-        public object ConvertBack(
-            object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotSupportedException("Cannot convert back");
-        }
-    }
-
 }

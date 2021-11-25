@@ -8,4 +8,20 @@
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="BorderBrush" Value="Silver"/>
     </Style>
+
+    <ControlTemplate TargetType="Button" x:Key="CornerButtonTemplate">
+        <Border x:Name="ButtonBorder" Style="{StaticResource ContentBorder}" Background="White" CornerRadius="3" 
+                HorizontalAlignment="Center" VerticalAlignment="Center">
+            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                              Content="{TemplateBinding ContentControl.Content}"/>
+        </Border>
+
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="ButtonBorder" Property="Background" Value="AliceBlue" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+    
+    
 </ResourceDictionary>

@@ -28,12 +28,20 @@ namespace SuperHelper
             InitializeComponent();
         }
 
-        private void ShowMoreClick(object sender, RoutedEventArgs e)
+        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
-            ShowBorder.Visibility = Visibility.Collapsed;
+            if (e.Property == DataContextProperty)
+            {
+                ShowButton.Tag = false;
+                ShowButton.Visibility = Visibility.Visible;
+            }
+            base.OnPropertyChanged(e);
+        }
 
-            SourceTexts.Visibility = Visibility.Visible;
-            StrucureInfo.Visibility = Visibility.Visible;
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            ShowButton.Tag = true;
+            ShowButton.Visibility = Visibility.Collapsed;
         }
     }
 

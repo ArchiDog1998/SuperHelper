@@ -15,7 +15,9 @@ namespace SuperHelper
 {
     public abstract class MenuReplacer : GH_DocumentObject
     {
-        private static readonly string _name = "urls.json";
+        //private static readonly string _name = ;
+
+        private static readonly string _location = Path.Combine(Folders.SettingsFolder, "urls.json");
 
         internal static Dictionary<string, string> UrlDict = new Dictionary<string, string>();
 
@@ -31,20 +33,19 @@ namespace SuperHelper
         internal static void SaveToJson()
         {
             JavaScriptSerializer ser = new JavaScriptSerializer();
-            File.WriteAllText(Path.Combine(Path.GetDirectoryName(typeof(MenuReplacer).Assembly.Location), _name),
-                ser.Serialize(UrlDict));
+            File.WriteAllText(_location, ser.Serialize(UrlDict));
         }
 
         public static bool Init()
         {
+            new HighLightConduit().Enabled = true;
 
             //Read from json.
             try
             {
-                string fullName = Path.Combine(Path.GetDirectoryName(typeof(MenuReplacer).Assembly.Location), _name);
-                if (File.Exists(fullName))
+                if (File.Exists(_location))
                 {
-                    string jsonStr = File.ReadAllText(fullName);
+                    string jsonStr = File.ReadAllText(_location);
                     JavaScriptSerializer ser = new JavaScriptSerializer();
                     UrlDict = ser.Deserialize<Dictionary<string, string>>(jsonStr);
                 }
@@ -99,26 +100,44 @@ namespace SuperHelper
 
         private void Menu_ObjectHelpClickNew(object sender, EventArgs e)
         {
-
             SetOneObject(this);
             _windowShown = true;
             _window.Show();
-
         }
 
         private static void SetOneObject(GH_DocumentObject obj)
         {
+            HighLightConduit.HighLightObject = null;
+            foreach (var view in Rhino.RhinoDoc.ActiveDoc.Views)
+            {
+                view.Redraw();
+            }
+
             _window.DataContext = null;
             _window.DataContext = obj;
 
-            //Set Urls
-            _window.oldUrl.Navigate("about:blank");
-            _window.oldUrl.Document.OpenNew(false);
-
             string html = (string)typeof(GH_DocumentObject).GetRuntimeMethods().Where(m => m.Name.Contains("HtmlHelp_Source")).First().Invoke(obj, new object[0]);
 
-            _window.oldUrl.Document.Write(html);
-            _window.oldUrl.Refresh();
+            if(html == null || html.Length == 0)
+            {
+                html = "We're sorry. Help is not yet available for this object";
+            }
+
+
+            if (html.ToUpperInvariant().StartsWith("GOTO:"))
+            {
+                _window.oldUrl.AllowNavigation = true;
+                _window.oldUrl.Navigate(html.Substring(5));
+            }
+            else
+            {
+                _window.oldUrl.Navigate("about:blank");
+                _window.oldUrl.Document.OpenNew(false);
+
+                _window.oldUrl.Document.Write(html);
+                _window.oldUrl.Refresh();
+            }
+
 
             if (obj != null && UrlDict.ContainsKey(obj.ComponentGuid.ToString()))
             {
@@ -136,7 +155,7 @@ namespace SuperHelper
 
         internal static void ActiveCanvas_DocumentObjectMouseDown(object sender, Grasshopper.GUI.GH_CanvasObjectMouseDownEventArgs e)
         {
-            if (_windowShown)
+            if (_windowShown && _window.AutoTarget)
                 SetOneObject((GH_DocumentObject)e.Object.Object.Attributes.GetTopLevel.DocObject);
         }
     }

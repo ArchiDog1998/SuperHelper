@@ -150,7 +150,7 @@ namespace SuperHelper
 
         private void RightResetClick(object sender, RoutedEventArgs e)
         {
-            ((GH_ColourPicker)LeftColor.Child).Colour = _materialColorDefault;
+            ((GH_ColourPicker)RightColor.Child).Colour = _materialColorDefault;
             MaterialColor = _materialColorDefault;
         }
 

@@ -143,13 +143,10 @@ namespace SuperHelper
             {
                 string url = UrlDict[obj.ComponentGuid.ToString()];
                 _window.UrlTextBox.Text = url;
-                _window.myWeb.Source = new Uri(url);
-
             }
             else
             {
                 _window.UrlTextBox.Text = "";
-                _window.myWeb.Source = null;
             } 
         }
 

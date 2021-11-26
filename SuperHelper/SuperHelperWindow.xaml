@@ -40,23 +40,23 @@
         </TabItem>
         
         <TabItem Header="URL Help">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+            <DockPanel>
+                <Grid DockPanel.Dock="Top">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Default Url: "/>
+                    <TextBox Grid.Column="1" x:Name="UrlTextBox"/>
+                    <Button Grid.Column="2" Content="Save" Click="SaveClick" Margin="3 0 0 0" Template="{StaticResource CornerButtonTemplate}"/>
+                    <Button Grid.Column="3" Content="Go" Click="GoClick" Margin="3 0 0 0" Template="{StaticResource CornerButtonTemplate}"/>
+                </Grid>
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                
-                <Label Grid.Row="0" Grid.Column="0" Content="Default Url: "/>
-                <TextBox Grid.Row="0" Grid.Column="1" x:Name="UrlTextBox" Margin="0 0 3 0"/>
-                <Button Grid.Row="0" Grid.Column="2" Content="Save and Go" Click="SaveClick"/>
-                <WebBrowser Grid.Row="1" Grid.Column="0"  Grid.ColumnSpan="3" x:Name="myWeb"/>
-            </Grid>
+
+                <WebBrowser Grid.Row="1" Grid.Column="0"  Grid.ColumnSpan="3" x:Name="myWeb" Navigated="myWeb_Navigated"/>
+            </DockPanel>
         </TabItem>
 
         <TabItem Header="Params Help">

@@ -119,8 +119,12 @@ namespace SuperHelper
         private void SaveClick(object sender, RoutedEventArgs e)
         {
             MenuReplacer.UrlDict[((GH_DocumentObject)DataContext).ComponentGuid.ToString()] = UrlTextBox.Text;
-            myWeb.Source = new Uri(UrlTextBox.Text);
             MenuReplacer.SaveToJson();
+        }
+
+        private void GoClick(object sender, RoutedEventArgs e)
+        {
+            myWeb.Source = new Uri(UrlTextBox.Text);
         }
 
         private void OpenFileClick(object sender, RoutedEventArgs e)
@@ -148,6 +152,22 @@ namespace SuperHelper
         {
             ((GH_ColourPicker)LeftColor.Child).Colour = _materialColorDefault;
             MaterialColor = _materialColorDefault;
+        }
+
+        private void myWeb_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        {
+            SuppressScriptErrors((WebBrowser)sender, true);
+        }
+
+        private void SuppressScriptErrors(WebBrowser wb, bool Hide)
+        {
+            FieldInfo fiComWebBrowser = typeof(WebBrowser).GetField("_axIWebBrowser2", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (fiComWebBrowser == null) return;
+
+            object objComWebBrowser = fiComWebBrowser.GetValue(wb);
+            if (objComWebBrowser == null) return;
+
+            objComWebBrowser.GetType().InvokeMember("Silent", BindingFlags.SetProperty, null, objComWebBrowser, new object[] { Hide });
         }
     }
 

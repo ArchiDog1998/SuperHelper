@@ -16,7 +16,7 @@ namespace SuperHelper
         public override Bitmap Icon => Properties.Resources.SuperHelperIcon_24;
 
         //Return a short string describing the purpose of this GHA library.
-        public override string Description => "Much better helper for grasshopper";
+        public override string Description => "Much better helper window for grasshopper";
 
         public override Guid Id => new Guid("A71D5B0A-9D5B-4E27-8933-BB83CB68066D");
 
@@ -26,7 +26,7 @@ namespace SuperHelper
         //Return a string representing your preferred contact details.
         public override string AuthorContact => "1123993881@qq.com";
 
-        public override string Version => "0.9.1 Alpha";
+        public override string Version => "1.0.0";
     }
 
     public class SuperHelperAssemblyPriority : GH_AssemblyPriority

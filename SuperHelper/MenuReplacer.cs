@@ -15,8 +15,6 @@ namespace SuperHelper
 {
     public abstract class MenuReplacer : GH_DocumentObject
     {
-        //private static readonly string _name = ;
-
         private static readonly string _location = Path.Combine(Folders.SettingsFolder, "urls.json");
 
         internal static Dictionary<string, string> UrlDict = new Dictionary<string, string>();
@@ -67,6 +65,7 @@ namespace SuperHelper
                 typeof(MenuReplacer).GetRuntimeMethods().Where(m => m.Name.Contains("Menu_ObjectHelpClickNew")).First()
                 );
         }
+
 
         private static bool ExchangeMethod(MethodInfo targetMethod, MethodInfo injectMethod)
         {
@@ -143,6 +142,11 @@ namespace SuperHelper
             {
                 string url = UrlDict[obj.ComponentGuid.ToString()];
                 _window.UrlTextBox.Text = url;
+
+                if(_window.myWeb.Source == null)
+                {
+                    _window.myWeb.Source = new Uri(url);
+                }
             }
             else
             {
@@ -153,7 +157,13 @@ namespace SuperHelper
         internal static void ActiveCanvas_DocumentObjectMouseDown(object sender, Grasshopper.GUI.GH_CanvasObjectMouseDownEventArgs e)
         {
             if (_windowShown && _window.AutoTarget)
-                SetOneObject((GH_DocumentObject)e.Object.Object.Attributes.GetTopLevel.DocObject);
+            {
+                Instances.ActiveCanvas.Document.ScheduleSolution(10, (doc) =>
+                {
+                    if(e.Object.Object.Attributes.Selected)
+                        SetOneObject((GH_DocumentObject)e.Object.Object.Attributes.GetTopLevel.DocObject);
+                });
+            }
         }
     }
 }

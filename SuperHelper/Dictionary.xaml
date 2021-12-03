@@ -11,7 +11,7 @@
 
     <ControlTemplate TargetType="Button" x:Key="CornerButtonTemplate">
         <Border x:Name="ButtonBorder" Style="{StaticResource ContentBorder}" Background="White" CornerRadius="3" 
-                HorizontalAlignment="Center" VerticalAlignment="Center">
+                HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth ="50">
             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
                               Content="{TemplateBinding ContentControl.Content}"/>
         </Border>

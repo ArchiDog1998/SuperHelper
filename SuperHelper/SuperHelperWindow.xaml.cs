@@ -177,9 +177,11 @@ namespace SuperHelper
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return null;
-
+            GH_DocumentObject gH_DocumentObject = (GH_DocumentObject)value;
+            if (gH_DocumentObject == null) return null;
 
             return value.GetType().FullName + "\n \n" +
+                   "Guid: " + gH_DocumentObject.ComponentGuid + "\n \n" +
                    string.Join(",\n", value.GetType().GetInterfaces().Select((t) => t.Name)) + "\n \n" +
                    FindFathers(value.GetType());
         }

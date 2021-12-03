@@ -65,8 +65,8 @@
 
         <TabItem Header="Development Help">
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="{Binding Converter={StaticResource TypeInfoConverter}, Mode=OneWay}"
-                           HorizontalAlignment="Center" MouseRightButtonDown="TextBlock_MouseDown"
+                <TextBox Text="{Binding Converter={StaticResource TypeInfoConverter}, Mode=OneWay}" IsReadOnly="True" Background="Transparent"
+                           HorizontalAlignment="Center" MouseRightButtonDown="TextBlock_MouseDown" BorderThickness="0"
                            ToolTip="Right click to save the class name to the ClipBoard."/>
                 <Button Content ="{Binding Converter={StaticResource TypeLoactionConverter}, Mode=OneWay}"
                          Template="{StaticResource CornerButtonTemplate}"

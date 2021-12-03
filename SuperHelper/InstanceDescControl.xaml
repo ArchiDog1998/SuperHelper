@@ -37,12 +37,13 @@
         </DockPanel>
 
         <Border DockPanel.Dock="Bottom" Style="{StaticResource ContentBorder}">
-            <TextBlock Text="{Binding Converter={StaticResource ObjectDescriptionConverter}, Mode=OneWay}"/>
+            <TextBox Text="{Binding Converter={StaticResource ObjectDescriptionConverter}, Mode=OneWay}" IsReadOnly="True"
+                     Background="Transparent" BorderThickness="0"/>
         </Border>
 
-            <TextBlock Text="{Binding InstanceDescription}" HorizontalAlignment="Center"
-                   Visibility="{Binding Converter={StaticResource IsNotParamConverter}, Mode=OneWay}"
-                   ToolTip="{Binding Converter={StaticResource GetRuntimeConverter}, Mode=OneWay}"/>
+        <TextBlock Text="{Binding InstanceDescription}" HorizontalAlignment="Center"
+               Visibility="{Binding Converter={StaticResource IsNotParamConverter}, Mode=OneWay}"
+               ToolTip="{Binding Converter={StaticResource GetRuntimeConverter}, Mode=OneWay}"/>
 
     </DockPanel>
 </UserControl>

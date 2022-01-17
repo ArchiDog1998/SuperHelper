@@ -18,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Grasshopper;
+using System.Windows.Interop;
 
 namespace SuperHelper
 {
@@ -101,14 +102,20 @@ namespace SuperHelper
             };
             RightColor.Child = materialPicker;
 
+            WindowInteropHelper windowInteropHelper = new WindowInteropHelper(this);
+            windowInteropHelper.Owner = Instances.DocumentEditor.Handle;
         }
 
         protected override void OnClosed(EventArgs e)
         {
             HighLightConduit.HighLightObject = null;
-            foreach (var view in Rhino.RhinoDoc.ActiveDoc.Views)
+
+            if(Rhino.RhinoDoc.ActiveDoc != null)
             {
-                view.Redraw();
+                foreach (var view in Rhino.RhinoDoc.ActiveDoc.Views)
+                {
+                    view.Redraw();
+                }
             }
 
             MenuReplacer._window = new SuperHelperWindow();

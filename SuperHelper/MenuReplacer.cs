@@ -160,8 +160,9 @@ namespace SuperHelper
             {
                 Instances.ActiveCanvas.Document.ScheduleSolution(10, (doc) =>
                 {
-                    if(e.Object.Object.Attributes.Selected)
-                        SetOneObject((GH_DocumentObject)e.Object.Object.Attributes.GetTopLevel.DocObject);
+                    IGH_DocumentObject obj = e.Object.Object.Attributes.GetTopLevel.DocObject;
+                    if (obj.Attributes.Selected)
+                        SetOneObject((GH_DocumentObject)obj);
                 });
             }
         }

@@ -66,8 +66,7 @@
         <TabItem Header="Development Help">
             <StackPanel Orientation="Vertical">
                 <TextBox Text="{Binding Converter={StaticResource TypeInfoConverter}, Mode=OneWay}" IsReadOnly="True" Background="Transparent"
-                           HorizontalAlignment="Center" MouseRightButtonDown="TextBlock_MouseDown" BorderThickness="0"
-                           ToolTip="Right click to save the class name to the ClipBoard."/>
+                           HorizontalAlignment="Center" BorderThickness="0"/>
                 <Button Content ="{Binding Converter={StaticResource TypeLoactionConverter}, Mode=OneWay}"
                          Template="{StaticResource CornerButtonTemplate}"
                         Click="OpenFileClick" ToolTip="Click to open File" HorizontalAlignment="Center"/>

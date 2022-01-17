@@ -141,13 +141,6 @@ namespace SuperHelper
             p.Start();
         }
 
-        private void TextBlock_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (this.DataContext == null) return;
-            string name = this.DataContext.GetType().Name;
-            Clipboard.SetText(name);
-        }
-
         private void LeftResetClick(object sender, RoutedEventArgs e)
         {
             ((GH_ColourPicker)LeftColor.Child).Colour = _wireColorDefault;

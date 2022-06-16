@@ -102,7 +102,7 @@ namespace SuperHelper
             };
             RightColor.Child = materialPicker;
 
-            new WindowInteropHelper(this).Owner = Instances.DocumentEditor.Handle;
+            //new WindowInteropHelper(this).Owner = Instances.DocumentEditor.Handle;
         }
 
         protected override void OnClosed(EventArgs e)

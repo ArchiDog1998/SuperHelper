@@ -1,10 +1,9 @@
-﻿using Grasshopper.Kernel;
+﻿using Grasshopper;
+using Grasshopper.GUI;
+using Grasshopper.Kernel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
-using Grasshopper.GUI;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -16,24 +15,21 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Grasshopper;
-using System.Windows.Interop;
 
 namespace SuperHelper
 {
-
-
     /// <summary>
-    /// Interaction logic for SuperHelperWindow.xaml
+    /// Interaction logic for SuperHelperControl.xaml
     /// </summary>
-    public partial class SuperHelperWindow : Window
+    public partial class SuperHelperControl : UserControl
     {
         private System.Drawing.Color _wireColorDefault = System.Drawing.Color.DarkBlue;
         public System.Drawing.Color WireColor
         {
             get => Instances.Settings.GetValue(nameof(WireColor), _wireColorDefault);
-            set 
+            set
             {
                 Instances.Settings.SetValue(nameof(WireColor), value);
                 foreach (var view in Rhino.RhinoDoc.ActiveDoc.Views)
@@ -70,8 +66,8 @@ namespace SuperHelper
         public int DisplayWireWidth
         {
             get => Instances.Settings.GetValue(nameof(DisplayWireWidth), _wireWidthDefault);
-            set 
-            { 
+            set
+            {
                 Instances.Settings.SetValue(nameof(DisplayWireWidth), value);
                 foreach (var view in Rhino.RhinoDoc.ActiveDoc.Views)
                 {
@@ -81,8 +77,7 @@ namespace SuperHelper
         }
 
 
-
-        public SuperHelperWindow()
+        public SuperHelperControl()
         {
             InitializeComponent();
 
@@ -101,25 +96,19 @@ namespace SuperHelper
                 MaterialColor = e.Colour;
             };
             RightColor.Child = materialPicker;
-
-            //new WindowInteropHelper(this).Owner = Instances.DocumentEditor.Handle;
         }
 
-        protected override void OnClosed(EventArgs e)
+        public void OnClosed()
         {
             HighLightConduit.HighLightObject = null;
 
-            if(Rhino.RhinoDoc.ActiveDoc != null)
+            if (Rhino.RhinoDoc.ActiveDoc != null)
             {
                 foreach (var view in Rhino.RhinoDoc.ActiveDoc.Views)
                 {
                     view.Redraw();
                 }
             }
-
-            MenuReplacer._window = new SuperHelperWindow();
-            MenuReplacer._windowShown = false;
-            base.OnClosed(e);
         }
 
         private void SaveClick(object sender, RoutedEventArgs e)
@@ -168,88 +157,10 @@ namespace SuperHelper
 
             objComWebBrowser.GetType().InvokeMember("Silent", BindingFlags.SetProperty, null, objComWebBrowser, new object[] { Hide });
         }
-    }
 
-    [ValueConversion(typeof(GH_DocumentObject), typeof(string))]
-    public class TypeInfoConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        private void TabItem_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (value == null) return null;
-            GH_DocumentObject gH_DocumentObject = (GH_DocumentObject)value;
-            if (gH_DocumentObject == null) return null;
-
-            return value.GetType().FullName + "\n \n" +
-                   "Guid: " + gH_DocumentObject.ComponentGuid + "\n \n" +
-                   string.Join(",\n", value.GetType().GetInterfaces().Select((t) => t.Name)) + "\n \n" +
-                   FindFathers(value.GetType());
-        }
-
-        private string FindFathers(Type type)
-        {
-            List<string> typeFull = new List<string>();
-            Type rightType = type;
-            while (rightType != typeof(object))
-            {
-                typeFull.Add(GetTypeName(rightType));
-                rightType = rightType.BaseType;
-            }
-
-            typeFull.Reverse();
-            string full = typeFull[0];
-            for (int i = 1; i < typeFull.Count; i++)
-            {
-                string space = "";
-                for (int j = 0; j < i; j++)
-                {
-                    space += "--";
-                }
-                full += "\n" + space + typeFull[i];
-            }
-            return full;
-        }
-
-        private string GetTypeName(Type type)
-        {
-            string res = type.Name;
-            if (!type.IsGenericType) return res;
-
-            res = res.Split('`')[0];
-            res += "<" + string.Join(",", type.GetGenericArguments().Select((t) => GetTypeName(t)).ToArray()) + ">";
-
-            return res;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
-        }
-    }
-
-    [ValueConversion(typeof(GH_DocumentObject), typeof(string))]
-    public class TypeLoactionConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value == null) return "";
-
-            GH_AssemblyInfo info = null;
-            Assembly typeAssembly = value.GetType().Assembly;
-            foreach (GH_AssemblyInfo lib in Grasshopper.Instances.ComponentServer.Libraries)
-            {
-                if (lib.Assembly == typeAssembly)
-                {
-                    info = lib;
-                    break;
-                }
-            }
-            if (info == null) return "";
-            return info.Location;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
+            SuperHelperAssemblyPriority.Hide();
         }
     }
 }

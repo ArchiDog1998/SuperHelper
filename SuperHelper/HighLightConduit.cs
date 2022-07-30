@@ -18,12 +18,10 @@ namespace SuperHelper
         {
             if(HighLightObject != null)
             {
-                int thickness = MenuReplacer._window.DisplayWireWidth;
-                HighLightObject.DrawViewportWires(new GH_PreviewWireArgs(e.Viewport, e.Display, MenuReplacer._window.WireColor, thickness));
+                int thickness = MenuReplacer._control.DisplayWireWidth;
+                HighLightObject.DrawViewportWires(new GH_PreviewWireArgs(e.Viewport, e.Display, MenuReplacer._control.WireColor, thickness));
                 HighLightObject.DrawViewportMeshes(new GH_PreviewMeshArgs(e.Viewport, e.Display, 
-                    new DisplayMaterial(MenuReplacer._window.MaterialColor), MeshingParameters.Default));
-
-
+                    new DisplayMaterial(MenuReplacer._control.MaterialColor), MeshingParameters.Default));
             }
             base.DrawOverlay(e);
         }

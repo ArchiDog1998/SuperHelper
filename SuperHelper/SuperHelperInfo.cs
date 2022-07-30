@@ -4,7 +4,8 @@ using Grasshopper.GUI.Canvas;
 using Grasshopper.Kernel;
 using System;
 using System.Drawing;
-using System.Windows;
+using System.Windows.Forms;
+using System.Windows.Forms.Integration;
 
 namespace SuperHelper
 {
@@ -31,6 +32,49 @@ namespace SuperHelper
 
     public class SuperHelperAssemblyPriority : GH_AssemblyPriority
     {
+        public static bool UseSuperHelperPanel
+        {
+            get => Instances.Settings.GetValue(nameof(UseSuperHelperPanel), true);
+            set => Instances.Settings.SetValue(nameof(UseSuperHelperPanel), value);
+        }
+
+        public static int SuperHelperPanelWidth
+        {
+            get => Instances.Settings.GetValue(nameof(SuperHelperPanelWidth), 400);
+            set => Instances.Settings.SetValue(nameof(SuperHelperPanelWidth), value);
+        }
+
+        private static ElementHost _ctrlHost = new ElementHost()
+        {
+            Dock = DockStyle.Right,
+            Child = MenuReplacer._control,
+            Width = SuperHelperPanelWidth,
+        };
+        private static GH_Splitter _splitter = new GH_Splitter()
+        {
+            Cursor = Cursors.VSplit,
+            Dock = DockStyle.Right,
+            Location = new Point(0, 439),
+            Margin = new Padding(24),
+            MaxSize = 800,
+            MinSize = 50,
+            Name = "Helper Splitter",
+            Size = new Size(10, 2744),
+        };
+
+        public static void Hide()
+        {
+            _ctrlHost.Hide();
+            _splitter.Hide();
+            UseSuperHelperPanel = false;
+        }
+
+        public static void Show()
+        {
+            _ctrlHost.Show();
+            _splitter.Show();
+            UseSuperHelperPanel = true;
+        }
         public override GH_LoadingInstruction PriorityLoad()
         {
             //MessageBox.Show("Hello");
@@ -53,9 +97,9 @@ namespace SuperHelper
 
         private void ActiveCanvas_DocumentChanged(GH_Canvas sender, GH_CanvasDocumentChangedEventArgs e)
         {
-            Grasshopper.Instances.ActiveCanvas.DocumentChanged -= ActiveCanvas_DocumentChanged;
+            Instances.ActiveCanvas.DocumentChanged -= ActiveCanvas_DocumentChanged;
 
-            GH_DocumentEditor editor = Grasshopper.Instances.DocumentEditor;
+            GH_DocumentEditor editor = Instances.DocumentEditor;
             if (editor == null)
             {
                 MessageBox.Show("SuperHelper can't find the menu!");
@@ -67,6 +111,15 @@ namespace SuperHelper
         private void DoingSomethingFirst(GH_DocumentEditor editor)
         {
             MenuReplacer.Init();
+
+            editor.Controls[0].Controls.Add(_splitter);
+            editor.Controls[0].Controls.Add(_ctrlHost);
+
+            Instances.DocumentEditor.FormClosing += (sender, e) =>
+            {
+                SuperHelperPanelWidth = _ctrlHost.Width;
+            };
+
         }
     }
 }

@@ -20,9 +20,7 @@ namespace SuperHelper
         internal static Dictionary<string, string> UrlDict = new Dictionary<string, string>();
 
 
-        internal static SuperHelperWindow _window = new SuperHelperWindow();
-
-        internal static bool _windowShown = false;
+        internal static SuperHelperControl _control = new SuperHelperControl();
 
         protected MenuReplacer(IGH_InstanceDescription tag) : base(tag)
         {
@@ -62,7 +60,7 @@ namespace SuperHelper
 
             return ExchangeMethod(
                 typeof(GH_DocumentObject).GetRuntimeMethods().Where(m => m.Name.Contains("Menu_ObjectHelpClick")).First(),
-                typeof(MenuReplacer).GetRuntimeMethods().Where(m => m.Name.Contains("Menu_ObjectHelpClickNew")).First()
+                typeof(MenuReplacer).GetRuntimeMethods().Where(m => m.Name.Contains(nameof(Menu_ObjectHelpClickNew))).First()
                 );
         }
 
@@ -99,9 +97,8 @@ namespace SuperHelper
 
         private void Menu_ObjectHelpClickNew(object sender, EventArgs e)
         {
+            SuperHelperAssemblyPriority.Show();
             SetOneObject(this);
-            _windowShown = true;
-            _window.Show();
         }
 
         private static void SetOneObject(GH_DocumentObject obj)
@@ -112,8 +109,8 @@ namespace SuperHelper
                 view.Redraw();
             }
 
-            _window.DataContext = null;
-            _window.DataContext = obj;
+            _control.DataContext = null;
+            _control.DataContext = obj;
 
             string html = (string)typeof(GH_DocumentObject).GetRuntimeMethods().Where(m => m.Name.Contains("HtmlHelp_Source")).First().Invoke(obj, new object[0]);
 
@@ -125,38 +122,38 @@ namespace SuperHelper
 
             if (html.ToUpperInvariant().StartsWith("GOTO:"))
             {
-                _window.oldUrl.AllowNavigation = true;
-                _window.oldUrl.Navigate(html.Substring(5));
+                _control.oldUrl.AllowNavigation = true;
+                _control.oldUrl.Navigate(html.Substring(5));
             }
             else
             {
-                _window.oldUrl.Navigate("about:blank");
-                _window.oldUrl.Document.OpenNew(false);
+                _control.oldUrl.Navigate("about:blank");
+                _control.oldUrl.Document.OpenNew(false);
 
-                _window.oldUrl.Document.Write(html);
-                _window.oldUrl.Refresh();
+                _control.oldUrl.Document.Write(html);
+                _control.oldUrl.Refresh();
             }
 
 
             if (obj != null && UrlDict.ContainsKey(obj.ComponentGuid.ToString()))
             {
                 string url = UrlDict[obj.ComponentGuid.ToString()];
-                _window.UrlTextBox.Text = url;
+                _control.UrlTextBox.Text = url;
 
-                if(_window.myWeb.Source == null)
+                if(_control.myWeb.Source == null)
                 {
-                    _window.myWeb.Source = new Uri(url);
+                    _control.myWeb.Source = new Uri(url);
                 }
             }
             else
             {
-                _window.UrlTextBox.Text = "";
+                _control.UrlTextBox.Text = "";
             } 
         }
 
         internal static void ActiveCanvas_DocumentObjectMouseDown(object sender, Grasshopper.GUI.GH_CanvasObjectMouseDownEventArgs e)
         {
-            if (_windowShown && _window.AutoTarget)
+            if (_control.AutoTarget)
             {
                 Instances.ActiveCanvas.Document.ScheduleSolution(10, (doc) =>
                 {

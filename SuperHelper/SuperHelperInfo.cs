@@ -79,8 +79,7 @@ namespace SuperHelper
         }
         public override GH_LoadingInstruction PriorityLoad()
         {
-            //MessageBox.Show("Hello");
-            Grasshopper.Instances.CanvasCreated += Instances_CanvasCreated;
+            Instances.CanvasCreated += Instances_CanvasCreated;
             return GH_LoadingInstruction.Proceed;
         }
 

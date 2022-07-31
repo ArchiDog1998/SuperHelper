@@ -4,6 +4,8 @@ using Grasshopper.GUI.Canvas;
 using Grasshopper.Kernel;
 using Rhino.Display;
 using System;
+using System.Linq;
+using System.Reflection;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -83,7 +85,6 @@ namespace SuperHelper
             Name = "Helper Splitter",
             Size = new Size(10, 2744),
         };
-
         public static void SwitchSide()
         {
             if (_ctrlHost == null || _splitter == null) return;

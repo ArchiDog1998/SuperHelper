@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace SuperHelper
 {
@@ -103,52 +104,59 @@ namespace SuperHelper
 
         private static void SetOneObject(GH_DocumentObject obj)
         {
-            HighLightConduit.HighLightObject = null;
-            foreach (var view in Rhino.RhinoDoc.ActiveDoc.Views)
+            Task.Run(() =>
             {
-                view.Redraw();
-            }
-
-            _control.DataContext = null;
-            _control.DataContext = obj;
-
-            string html = (string)typeof(GH_DocumentObject).GetRuntimeMethods().Where(m => m.Name.Contains("HtmlHelp_Source")).First().Invoke(obj, new object[0]);
-
-            if(html == null || html.Length == 0)
-            {
-                html = "We're sorry. Help is not yet available for this object";
-            }
-
-
-            if (html.ToUpperInvariant().StartsWith("GOTO:"))
-            {
-                _control.oldUrl.AllowNavigation = true;
-                _control.oldUrl.Navigate(html.Substring(5));
-            }
-            else
-            {
-                _control.oldUrl.Navigate("about:blank");
-                _control.oldUrl.Document.OpenNew(false);
-
-                _control.oldUrl.Document.Write(html);
-                _control.oldUrl.Refresh();
-            }
-
-
-            if (obj != null && UrlDict.ContainsKey(obj.ComponentGuid.ToString()))
-            {
-                string url = UrlDict[obj.ComponentGuid.ToString()];
-                _control.UrlTextBox.Text = url;
-
-                if(_control.myWeb.Source == null)
+                HighLightConduit.HighLightObject = null;
+                foreach (var view in Rhino.RhinoDoc.ActiveDoc.Views)
                 {
-                    _control.myWeb.Source = new Uri(url);
+                    view.Redraw();
                 }
-            }
-            else
-            {
-                _control.UrlTextBox.Text = "";
-            } 
+
+                _control.Dispatcher.Invoke(() =>
+                {
+                    _control.DataContext = null;
+                    _control.DataContext = obj;
+
+
+                    string html = (string)typeof(GH_DocumentObject).GetRuntimeMethods().Where(m => m.Name.Contains("HtmlHelp_Source")).First().Invoke(obj, new object[0]);
+
+                    if (html == null || html.Length == 0)
+                    {
+                        html = "We're sorry. Help is not yet available for this object";
+                    }
+
+                    if (html.ToUpperInvariant().StartsWith("GOTO:"))
+                    {
+                        _control.oldUrl.AllowNavigation = true;
+                        _control.oldUrl.Navigate(html.Substring(5));
+                    }
+                    else
+                    {
+                        _control.oldUrl.Navigate("about:blank");
+                        _control.oldUrl.Document.OpenNew(false);
+
+                        _control.oldUrl.Document.Write(html);
+                        _control.oldUrl.Refresh();
+                    }
+
+
+                    if (obj != null && UrlDict.ContainsKey(obj.ComponentGuid.ToString()))
+                    {
+                        string url = UrlDict[obj.ComponentGuid.ToString()];
+                        _control.UrlTextBox.Text = url;
+
+                        if (_control.myWeb.Source == null)
+                        {
+                            _control.myWeb.Source = new Uri(url);
+                        }
+                    }
+                    else
+                    {
+                        _control.UrlTextBox.Text = "";
+                    }
+                });
+
+            });
         }
 
         internal static void ActiveCanvas_DocumentObjectMouseDown(object sender, Grasshopper.GUI.GH_CanvasObjectMouseDownEventArgs e)

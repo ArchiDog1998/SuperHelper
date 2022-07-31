@@ -1,6 +1,7 @@
 ﻿using Grasshopper;
 using Grasshopper.GUI;
 using Grasshopper.Kernel;
+using Rhino.Display;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -142,7 +143,7 @@ namespace SuperHelper
             MaterialColor = _materialColorDefault;
         }
 
-        private void myWeb_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        private void myWeb_Navigated(object sender, NavigationEventArgs e)
         {
             SuppressScriptErrors((WebBrowser)sender, true);
         }

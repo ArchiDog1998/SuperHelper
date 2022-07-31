@@ -22,15 +22,25 @@
 
         </ResourceDictionary>
     </UserControl.Resources>
+    <Grid x:Name="MotherGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="9"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+        
+        <local:RhinoViewportHost/>
 
-        <TabControl>
-        <TabItem Header="Origin Help"   MouseDown="TabItem_MouseDown" ToolTip="Right click to close the TabContorl.">
+        <GridSplitter Grid.Row="1" Height="5" Margin="0 2 0 2" HorizontalAlignment="Stretch" ShowsPreview="True"/>
+
+        <TabControl Grid.Row="2">
+            <TabItem Header="Origin Help"   MouseDown="TabItem_MouseDown" ToolTip="Right click to close the TabContorl.">
                 <wfi:WindowsFormsHost>
                     <wf:WebBrowser x:Name="oldUrl"/>
                 </wfi:WindowsFormsHost>
             </TabItem>
 
-        <TabItem Header="URL Help"   MouseDown="TabItem_MouseDown" ToolTip="Right click to close the TabContorl.">
+            <TabItem Header="URL Help"   MouseDown="TabItem_MouseDown" ToolTip="Right click to close the TabContorl.">
                 <DockPanel>
                     <Grid DockPanel.Dock="Top">
                         <Grid.ColumnDefinitions>
@@ -50,11 +60,11 @@
                 </DockPanel>
             </TabItem>
 
-        <TabItem Header="Params Help"   MouseDown="TabItem_MouseDown" ToolTip="Right click to close the TabContorl.">
+            <TabItem Header="Params Help"   MouseDown="TabItem_MouseDown" ToolTip="Right click to close the TabContorl.">
                 <local:DocumentObjectInfoControl DataContext="{Binding Mode=OneWay}"/>
             </TabItem>
 
-        <TabItem Header="Development Help"   MouseDown="TabItem_MouseDown" ToolTip="Right click to close the TabContorl.">
+            <TabItem Header="Development Help"   MouseDown="TabItem_MouseDown" ToolTip="Right click to close the TabContorl.">
                 <StackPanel Orientation="Vertical">
                     <TextBox Text="{Binding Converter={StaticResource TypeInfoConverter}, Mode=OneWay}" IsReadOnly="True" Background="Transparent"
                            HorizontalAlignment="Center" BorderThickness="0"/>
@@ -63,7 +73,7 @@
                         Click="OpenFileClick" ToolTip="Click to open File" HorizontalAlignment="Center"/>
                 </StackPanel>
             </TabItem>
-        <TabItem Header="Settings"  MouseDown="TabItem_MouseDown" ToolTip="Right click to close the TabContorl.">
+            <TabItem Header="Settings"  MouseDown="TabItem_MouseDown" ToolTip="Right click to close the TabContorl.">
                 <DockPanel>
                     <Border DockPanel.Dock="Top" Style="{StaticResource ContentBorder}" CornerRadius="5" Margin="5" Padding="5">
                         <Grid >
@@ -122,5 +132,7 @@
             </TabItem>
 
         </TabControl>
+    </Grid>
+
 
 </UserControl>

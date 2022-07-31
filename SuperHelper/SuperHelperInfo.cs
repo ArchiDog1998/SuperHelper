@@ -2,8 +2,10 @@
 using Grasshopper.GUI;
 using Grasshopper.GUI.Canvas;
 using Grasshopper.Kernel;
+using Rhino.Display;
 using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 
@@ -27,7 +29,7 @@ namespace SuperHelper
         //Return a string representing your preferred contact details.
         public override string AuthorContact => "1123993881@qq.com";
 
-        public override string Version => "1.0.5";
+        public override string Version => "1.1.0";
     }
 
     public class SuperHelperAssemblyPriority : GH_AssemblyPriority
@@ -84,12 +86,12 @@ namespace SuperHelper
 
         private void Instances_CanvasCreated(GH_Canvas canvas)
         {
-            Grasshopper.Instances.CanvasCreated -= Instances_CanvasCreated;
+            Instances.CanvasCreated -= Instances_CanvasCreated;
 
-            GH_DocumentEditor editor = Grasshopper.Instances.DocumentEditor;
+            GH_DocumentEditor editor = Instances.DocumentEditor;
             if (editor == null)
             {
-                Grasshopper.Instances.ActiveCanvas.DocumentChanged += ActiveCanvas_DocumentChanged;
+                Instances.ActiveCanvas.DocumentChanged += ActiveCanvas_DocumentChanged;
                 return;
             }
             DoingSomethingFirst(editor);
@@ -119,7 +121,6 @@ namespace SuperHelper
             {
                 SuperHelperPanelWidth = _ctrlHost.Width;
             };
-
         }
     }
 }

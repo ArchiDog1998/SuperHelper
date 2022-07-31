@@ -17,7 +17,7 @@ namespace SuperHelper
         {
             if(_view != null)
             {
-                _view.Size = new Size((int)finalSize.Width - 18, (int)finalSize.Height - 40);
+                _view.Size = new Size((int)finalSize.Width, (int)finalSize.Height);
             }
             return base.ArrangeOverride(finalSize);
         }
@@ -28,8 +28,8 @@ namespace SuperHelper
 
             var parent = GetParent(_view.Handle);
 
-            SetWindowLong(parent, -16, GetWindowLong(parent, -16) & ~0x00040000L);
-            EnableMenuItem(GetSystemMenu(parent, false), 0xF060, 0x00000000L | 0x00000002L | 0x00000001L);
+            //Remove Resize & Caption  
+            SetWindowLong(parent, -16, GetWindowLong(parent, -16) & ~0x00040000L & ~0x00C00000L);
 
             return new HandleRef(this, parent);
         }
@@ -44,12 +44,6 @@ namespace SuperHelper
 
         [DllImport("user32.dll", EntryPoint = "DestroyWindow", CharSet = CharSet.Unicode)]
         internal static extern bool DestroyWindow(IntPtr hwnd);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        internal static extern bool EnableMenuItem(IntPtr hWnd, long uIDEnableItem, long uEnable);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        internal static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         internal static extern long SetWindowLong(IntPtr hWnd, int nIndex, long deNewLong);

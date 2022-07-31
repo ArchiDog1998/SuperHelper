@@ -46,16 +46,36 @@ namespace SuperHelper
             set => Instances.Settings.SetValue(nameof(SuperHelperPanelWidth), value);
         }
 
+        public static bool IsSuperHelperOnRight
+        {
+            get => Instances.Settings.GetValue(nameof(SuperHelperPanelWidth), true);
+            set
+            {
+                Instances.Settings.SetValue(nameof(SuperHelperPanelWidth), value);
+                if (value)
+                {
+                    _ctrlHost.Dock = DockStyle.Right;
+                    _splitter.Dock = DockStyle.Right;
+                }
+                else
+                {
+                    _ctrlHost.Dock = DockStyle.Left;
+                    _splitter.Dock = DockStyle.Left;
+                }
+
+            }
+        }
+
         private static ElementHost _ctrlHost = new ElementHost()
         {
-            Dock = DockStyle.Right,
+            Dock = IsSuperHelperOnRight ? DockStyle.Right : DockStyle.Left,
             Child = MenuReplacer._control,
             Width = SuperHelperPanelWidth,
         };
         private static GH_Splitter _splitter = new GH_Splitter()
         {
             Cursor = Cursors.VSplit,
-            Dock = DockStyle.Right,
+            Dock = IsSuperHelperOnRight ? DockStyle.Right : DockStyle.Left,
             Location = new Point(0, 439),
             Margin = new Padding(24),
             MaxSize = 800,
@@ -63,6 +83,13 @@ namespace SuperHelper
             Name = "Helper Splitter",
             Size = new Size(10, 2744),
         };
+
+        public static void SwitchSide()
+        {
+            if (_ctrlHost == null || _splitter == null) return;
+
+            IsSuperHelperOnRight = !IsSuperHelperOnRight;
+        }
 
         public static void Hide()
         {

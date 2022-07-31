@@ -159,7 +159,17 @@ namespace SuperHelper
             objComWebBrowser.GetType().InvokeMember("Silent", BindingFlags.SetProperty, null, objComWebBrowser, new object[] { Hide });
         }
 
-        private void TabItem_MouseDown(object sender, MouseButtonEventArgs e)
+        //private void TabItem_MouseDown(object sender, MouseButtonEventArgs e)
+        //{
+        //    SuperHelperAssemblyPriority.Hide();
+        //}
+
+        private void SwitchSide_Click(object sender, RoutedEventArgs e)
+        {
+            SuperHelperAssemblyPriority.SwitchSide();
+        }
+
+        private void Close_Click(object sender, RoutedEventArgs e)
         {
             SuperHelperAssemblyPriority.Hide();
         }

@@ -34,13 +34,13 @@
         <GridSplitter Grid.Row="1" Height="5" Margin="0 2 0 2" HorizontalAlignment="Stretch" ShowsPreview="True"/>
 
         <TabControl Grid.Row="2">
-            <TabItem Header="Origin Help"   MouseDown="TabItem_MouseDown" ToolTip="Right click to close the TabContorl.">
+            <TabItem Header="Origin Help">
                 <wfi:WindowsFormsHost>
                     <wf:WebBrowser x:Name="oldUrl"/>
                 </wfi:WindowsFormsHost>
             </TabItem>
 
-            <TabItem Header="URL Help"   MouseDown="TabItem_MouseDown" ToolTip="Right click to close the TabContorl.">
+            <TabItem Header="URL Help">
                 <DockPanel>
                     <Grid DockPanel.Dock="Top">
                         <Grid.ColumnDefinitions>
@@ -60,11 +60,11 @@
                 </DockPanel>
             </TabItem>
 
-            <TabItem Header="Params Help"   MouseDown="TabItem_MouseDown" ToolTip="Right click to close the TabContorl.">
+            <TabItem Header="Params Help">
                 <local:DocumentObjectInfoControl DataContext="{Binding Mode=OneWay}"/>
             </TabItem>
 
-            <TabItem Header="Development Help"   MouseDown="TabItem_MouseDown" ToolTip="Right click to close the TabContorl.">
+            <TabItem Header="Development Help">
                 <StackPanel Orientation="Vertical">
                     <TextBox Text="{Binding Converter={StaticResource TypeInfoConverter}, Mode=OneWay}" IsReadOnly="True" Background="Transparent"
                            HorizontalAlignment="Center" BorderThickness="0"/>
@@ -73,7 +73,7 @@
                         Click="OpenFileClick" ToolTip="Click to open File" HorizontalAlignment="Center"/>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="Settings"  MouseDown="TabItem_MouseDown" ToolTip="Right click to close the TabContorl.">
+            <TabItem Header="Settings">
                 <DockPanel>
                     <Border DockPanel.Dock="Top" Style="{StaticResource ContentBorder}" CornerRadius="5" Margin="5" Padding="5">
                         <Grid >
@@ -87,11 +87,18 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Auto Target: "
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Auto Target: " VerticalAlignment="Center"
                            ToolTip="Click DocumentObject to switch the helper's target."/>
 
                             <CheckBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"
                           IsChecked="{Binding ElementName=Father, Path=AutoTarget, Mode=TwoWay}"/>
+
+                            <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"  Orientation="Horizontal">
+                                <Button Content="Switch Left Right" Template="{StaticResource CornerButtonTemplate}" Click="SwitchSide_Click"/>
+                                <Button Content="Close Control" Template="{StaticResource CornerButtonTemplate}" Margin="5 0 0 0" Click="Close_Click" Foreground="DarkRed"/>
+
+                            </StackPanel>
+
 
                             <TextBlock Grid.Row="2" Grid.Column="0" Text="Highlight Width: "
                            ToolTip="Change the highlight preview wire width."/>

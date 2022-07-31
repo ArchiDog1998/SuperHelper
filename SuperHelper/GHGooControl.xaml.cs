@@ -78,6 +78,20 @@ namespace SuperHelper
             }
         }
 
+        private void SwitchButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Button button = sender as Button;
+            if (button == null) return;
+
+            IGH_Goo goo = (IGH_Goo)button.DataContext;
+
+            HighLightConduit.HighLightObject = null;
+            foreach (var view in Rhino.RhinoDoc.ActiveDoc.Views)
+            {
+                view.Redraw();
+            }
+        }
+
         private void SwitchButton_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
             Button button = sender as Button;

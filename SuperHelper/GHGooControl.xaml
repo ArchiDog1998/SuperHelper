@@ -64,7 +64,7 @@
     </UserControl.Resources>
 
     <Button Click="Button_Click" BorderThickness="0" Background="Transparent" Foreground="Black" x:Name="SwitchButton" Tag="False" HorizontalAlignment="Stretch"
-            MouseMove="SwitchButton_MouseMove">
+            MouseMove="SwitchButton_MouseMove" MouseLeave="SwitchButton_MouseLeave">
         <Button.Style>
             <Style TargetType="ContentControl">
                 <Style.Triggers>

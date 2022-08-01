@@ -18,7 +18,6 @@ namespace SuperHelper
         {
             if(_windowHandle != IntPtr.Zero)
             {
-
                 //_view.Size = new Size((int)finalSize.Width, (int)finalSize.Height);
                 SetWindowPos(_windowHandle, 0, 0, 0, (int)finalSize.Width, (int)finalSize.Height, 0);
             }

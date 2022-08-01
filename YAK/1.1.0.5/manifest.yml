@@ -1,6 +1,6 @@
 ---
 name: SuperHelper
-version: 1.1.0.4
+version: 1.1.0.5
 authors:
 - 秋水
 description: >
@@ -13,7 +13,7 @@ description: >
   Origin Help is the default help in Grasshopper. URL Help can specify a web page for every document object. Params Help can show document object's properties and data in calculation. Development Help can find the document object's assembly file, and its extra properties.
   
   
-  1.1.0.4 Notes:
+  1.1.0.5 Notes:
   
   1. Change the Super Helper window to Super Helper control on grasshopper window.
   

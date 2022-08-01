@@ -44,7 +44,16 @@ namespace SuperHelper
 
         public static int SuperHelperPanelWidth
         {
-            get => Instances.Settings.GetValue(nameof(SuperHelperPanelWidth), 400);
+            get 
+            { 
+                var width = Instances.Settings.GetValue(nameof(SuperHelperPanelWidth), 400);
+                if(width < 0)
+                {
+                    width = 400;
+                    SuperHelperPanelWidth = width;
+                }
+                return width;
+            }
             set => Instances.Settings.SetValue(nameof(SuperHelperPanelWidth), value);
         }
 

@@ -32,7 +32,7 @@ namespace SuperHelper
         //Return a string representing your preferred contact details.
         public override string AuthorContact => "1123993881@qq.com";
 
-        public override string Version => "1.1.0";
+        public override string Version => "1.1.1";
     }
 
     public class SuperHelperAssemblyPriority : GH_AssemblyPriority

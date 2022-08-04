@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
+using System.Threading.Tasks;
 
 namespace SuperHelper
 {
@@ -89,7 +90,7 @@ namespace SuperHelper
             Dock = IsSuperHelperOnRight ? DockStyle.Right : DockStyle.Left,
             Location = new Point(0, 439),
             Margin = new Padding(24),
-            MaxSize = 800,
+            MaxSize = 8000,
             MinSize = 50,
             Name = "Helper Splitter",
             Size = new Size(10, 2744),
@@ -157,6 +158,22 @@ namespace SuperHelper
             {
                 SuperHelperPanelWidth = _ctrlHost.Width;
             };
+
+            Rhino.RhinoDoc.EndOpenDocument += RhinoDoc_EndOpenDocument;
+        }
+
+        private void RhinoDoc_EndOpenDocument(object sender, Rhino.DocumentOpenEventArgs e)
+        {
+            Task.Run(() =>
+            {
+                Task.Delay(500);
+
+                MenuReplacer._control.Dispatcher.Invoke(() =>
+                {
+                    MenuReplacer._control.UpdateViewPortHost();
+                });
+
+            });
         }
     }
 }

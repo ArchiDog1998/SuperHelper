@@ -30,7 +30,7 @@ namespace SuperHelper
         private IntPtr _windowHandle = IntPtr.Zero;
         protected override System.Windows.Size ArrangeOverride(System.Windows.Size finalSize)
         {
-            if(_windowHandle != IntPtr.Zero)
+            if (_windowHandle != IntPtr.Zero)
             {
                 int width = (int)(finalSize.Width * ScreenScale);
                 int height = (int)(finalSize.Height * ScreenScale);
@@ -38,18 +38,30 @@ namespace SuperHelper
             }
             return base.ArrangeOverride(finalSize);
         }
+
         protected override HandleRef BuildWindowCore(HandleRef hwndParent)
         {
             var view = Rhino.RhinoDoc.ActiveDoc.Views.Find("Helper", true) ??
                 Rhino.RhinoDoc.ActiveDoc.Views.Add("Helper", DefinedViewportProjection.Perspective, new Rectangle(0, 0, 300, 200), true);
+            view.Floating = true;
+
+            var form = new System.Windows.Forms.Form() { BackColor = Color.DarkGray};
 
             _windowHandle = GetParent(view.Handle);
-            SetParent(_windowHandle, this.Handle);
+            form.MouseDown += (s, e) =>
+            {
+                SetWindowPos(_windowHandle, 0, 0, 0, form.Size.Width, form.Size.Height, 0);
+            };
 
             //Remove Resize & Caption  
             SetWindowLong(_windowHandle, -16, GetWindowLong(_windowHandle, -16) & ~0x00040000L & ~0x00C00000L);
 
-            return new HandleRef(this, _windowHandle);
+            //Add a form between two level.
+            SetParent(_windowHandle, form.Handle);
+            SetWindowLong(form.Handle, -16, (GetWindowLong(form.Handle, -16)| 0x40000000L | 0x02000000L) & ~0x00040000L & ~0x00C00000L);
+            SetParent(form.Handle, hwndParent.Handle);
+
+            return new HandleRef(this, form.Handle);
         }
 
         protected override void DestroyWindowCore(HandleRef hwnd)

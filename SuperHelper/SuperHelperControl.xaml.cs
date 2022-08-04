@@ -168,5 +168,18 @@ namespace SuperHelper
         {
             SuperHelperAssemblyPriority.Hide();
         }
+
+        public void UpdateViewPortHost()
+        {
+            foreach (var child in MotherGrid.Children)
+            {
+                if(child is RhinoViewportHost host)
+                {
+                    MotherGrid.Children.Remove(host);
+                    break;
+                }
+            }
+            MotherGrid.Children.Add(new RhinoViewportHost());
+        }
     }
 }

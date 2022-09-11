@@ -115,7 +115,7 @@ namespace SuperHelper
                 _control.Dispatcher.Invoke(() =>
                 {
                     _control.DataContext = null;
-                    _control.DataContext = obj;
+                    //_control.DataContext = obj;
 
 
                     string html = (string)typeof(GH_DocumentObject).GetRuntimeMethods().Where(m => m.Name.Contains("HtmlHelp_Source")).First().Invoke(obj, new object[0]);
@@ -165,9 +165,8 @@ namespace SuperHelper
             {
                 Instances.ActiveCanvas.Document.ScheduleSolution(10, (doc) =>
                 {
-                    IGH_DocumentObject obj = e.Object.Object.Attributes.GetTopLevel.DocObject;
-                    if (obj.Attributes.Selected)
-                        SetOneObject((GH_DocumentObject)obj);
+                    var obj = (GH_DocumentObject)e.Object.Object.Attributes.GetTopLevel.DocObject;
+                    if (obj.Attributes.Selected) SetOneObject(obj);
                 });
             }
         }

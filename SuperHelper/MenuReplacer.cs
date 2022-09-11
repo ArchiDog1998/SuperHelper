@@ -106,56 +106,71 @@ namespace SuperHelper
         {
             Task.Run(() =>
             {
-                HighLightConduit.HighLightObject = null;
-                foreach (var view in Rhino.RhinoDoc.ActiveDoc.Views)
+                try
                 {
-                    view.Redraw();
-                }
-
-                _control.Dispatcher.Invoke(() =>
-                {
-                    _control.DataContext = null;
-                    //_control.DataContext = obj;
-
-
-                    string html = (string)typeof(GH_DocumentObject).GetRuntimeMethods().Where(m => m.Name.Contains("HtmlHelp_Source")).First().Invoke(obj, new object[0]);
-
-                    if (html == null || html.Length == 0)
+                    HighLightConduit.HighLightObject = null;
+                    foreach (var view in Rhino.RhinoDoc.ActiveDoc.Views)
                     {
-                        html = "We're sorry. Help is not yet available for this object";
+                        view.Redraw();
                     }
 
-                    if (html.ToUpperInvariant().StartsWith("GOTO:"))
+                    _control.Dispatcher.Invoke(() =>
                     {
-                        _control.oldUrl.AllowNavigation = true;
-                        _control.oldUrl.Navigate(html.Substring(5));
-                    }
-                    else
-                    {
-                        _control.oldUrl.Navigate("about:blank");
-                        _control.oldUrl.Document.OpenNew(false);
+                        _control.DataContext = null;
 
-                        _control.oldUrl.Document.Write(html);
-                        _control.oldUrl.Refresh();
-                    }
-
-
-                    if (obj != null && UrlDict.ContainsKey(obj.ComponentGuid.ToString()))
-                    {
-                        string url = UrlDict[obj.ComponentGuid.ToString()];
-                        _control.UrlTextBox.Text = url;
-
-                        if (_control.myWeb.Source == null)
+                        try
                         {
-                            _control.myWeb.Source = new Uri(url);
+                            _control.DataContext = obj;
                         }
-                    }
-                    else
-                    {
-                        _control.UrlTextBox.Text = "";
-                    }
-                });
+                        catch
+                        {
 
+                        }
+
+
+                        string html = (string)typeof(GH_DocumentObject).GetRuntimeMethods().Where(m => m.Name.Contains("HtmlHelp_Source")).First().Invoke(obj, new object[0]);
+
+                        if (html == null || html.Length == 0)
+                        {
+                            html = "We're sorry. Help is not yet available for this object";
+                        }
+
+                        if (html.ToUpperInvariant().StartsWith("GOTO:"))
+                        {
+                            _control.oldUrl.AllowNavigation = true;
+                            _control.oldUrl.Navigate(html.Substring(5));
+                        }
+                        else
+                        {
+                            _control.oldUrl.Navigate("about:blank");
+                            _control.oldUrl.Document.OpenNew(false);
+
+                            _control.oldUrl.Document.Write(html);
+                            _control.oldUrl.Refresh();
+                        }
+
+
+                        if (obj != null && UrlDict.ContainsKey(obj.ComponentGuid.ToString()))
+                        {
+                            string url = UrlDict[obj.ComponentGuid.ToString()];
+                            _control.UrlTextBox.Text = url;
+
+                            if (_control.myWeb.Source == null)
+                            {
+                                _control.myWeb.Source = new Uri(url);
+                            }
+                        }
+                        else
+                        {
+                            _control.UrlTextBox.Text = "";
+                        }
+                    });
+
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             });
         }
 

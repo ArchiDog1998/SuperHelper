@@ -32,7 +32,7 @@ namespace SuperHelper
         //Return a string representing your preferred contact details.
         public override string AuthorContact => "1123993881@qq.com";
 
-        public override string Version => "1.1.1";
+        public override string Version => "1.1.3";
     }
 
     public class SuperHelperAssemblyPriority : GH_AssemblyPriority
@@ -160,6 +160,11 @@ namespace SuperHelper
             };
 
             Rhino.RhinoDoc.EndOpenDocument += RhinoDoc_EndOpenDocument;
+
+            _splitter.MouseDown += (sender, e) =>
+            {
+                _splitter.MaxSize = editor.Controls[0].Width - 80;
+            };
         }
 
         private void RhinoDoc_EndOpenDocument(object sender, Rhino.DocumentOpenEventArgs e)

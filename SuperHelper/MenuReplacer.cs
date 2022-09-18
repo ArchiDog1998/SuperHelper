@@ -106,8 +106,6 @@ namespace SuperHelper
         {
             Task.Run(() =>
             {
-                try
-                {
                     HighLightConduit.HighLightObject = null;
                     foreach (var view in Rhino.RhinoDoc.ActiveDoc.Views)
                     {
@@ -166,11 +164,6 @@ namespace SuperHelper
                         }
                     });
 
-                }
-                catch(Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
             });
         }
 
@@ -178,11 +171,8 @@ namespace SuperHelper
         {
             if (_control.AutoTarget)
             {
-                Instances.ActiveCanvas.Document.ScheduleSolution(10, (doc) =>
-                {
-                    var obj = (GH_DocumentObject)e.Object.Object.Attributes.GetTopLevel.DocObject;
-                    if (obj.Attributes.Selected) SetOneObject(obj);
-                });
+                var obj = (GH_DocumentObject)e.Object.Object.Attributes.GetTopLevel?.DocObject;
+                SetOneObject(obj);
             }
         }
     }

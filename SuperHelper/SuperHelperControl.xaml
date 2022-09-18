@@ -29,12 +29,6 @@
             <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
 
-        
-        <!--<Grid Background="Black">
-            <Label Content="Please resize the layout to reset viewport." HorizontalAlignment="Center" VerticalAlignment="Center" 
-               FontWeight="Bold" FontSize="16" Foreground="Chocolate"/>
-
-        </Grid>-->
         <local:RhinoViewportHost/>
 
 

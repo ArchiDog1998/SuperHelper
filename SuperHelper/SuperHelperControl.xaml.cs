@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -97,6 +98,8 @@ namespace SuperHelper
                 MaterialColor = e.Colour;
             };
             RightColor.Child = materialPicker;
+
+            oldUrl.ScriptErrorsSuppressed = true;
         }
 
         public void OnClosed()

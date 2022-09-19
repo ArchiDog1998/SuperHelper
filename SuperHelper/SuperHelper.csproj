@@ -26,6 +26,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Reference Include="System.Net" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />

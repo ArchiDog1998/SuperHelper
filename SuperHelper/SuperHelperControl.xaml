@@ -19,7 +19,7 @@
             <local:TypeInfoConverter x:Key="TypeInfoConverter"/>
             <local:TypeLoactionConverter x:Key="TypeLoactionConverter"/>
             <local:ObjectDescriptionConverter x:Key="ObjectDescriptionConverter"/>
-
+            <local:BitmapConverter x:Key="BitmapConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid x:Name="MotherGrid">
@@ -74,6 +74,75 @@
                         Click="OpenFileClick" ToolTip="Click to open File" HorizontalAlignment="Center"/>
                 </StackPanel>
             </TabItem>
+            <TabItem Header="Example">
+                <DockPanel>
+                    <Button DockPanel.Dock="Bottom" Content="Edit" Click="SwitchButton_Click" 
+                            Template="{StaticResource CornerButtonTemplate}" Margin="5"/>
+
+                    <Grid>
+                        <ListView BorderThickness="0" x:Name="ExampleList">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                                    <!--<Setter Property="Height" Value="{Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type ScrollContentPresenter}}}"/>-->
+                                    <!--<EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick"/>-->
+                                    <EventSetter Event="MouseUp" Handler="ListBoxItem_MouseUp"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <DockPanel>
+                                        <Image DockPanel.Dock="Left" 
+                                           Source="{Binding Thumbnail, Converter={StaticResource BitmapConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+
+                                        <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Center"  Orientation="Horizontal">
+                                            <TextBlock FontWeight="Bold" FontSize="20"
+                                               Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow"/>
+                                            <TextBlock FontWeight="Bold" FontSize="16" VerticalAlignment="Bottom"
+                                               Text="{Binding Author, UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow"/>
+                                        </StackPanel>
+
+                                        <Grid>
+                                            <TextBlock Margin="10" HorizontalAlignment="Center" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow"/>
+                                        </Grid>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                        </ListView>
+
+                        <DataGrid AutoGenerateColumns="False" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="WhiteSmoke" CanUserAddRows="True" x:Name="ExampleData"  Visibility="Collapsed"
+                                  Background="Transparent" BorderThickness="0">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Path" Binding="{Binding Path, Mode=TwoWay}">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTemplateColumn Header="Remove">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Remove" Click="RemoveButton_Click" Template="{StaticResource CornerButtonTemplate}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+
+                </DockPanel>
+
+            </TabItem>
+            
             <TabItem Header="Settings">
                 <DockPanel>
                     <Border DockPanel.Dock="Top" Style="{StaticResource ContentBorder}" CornerRadius="5" Margin="5" Padding="5">

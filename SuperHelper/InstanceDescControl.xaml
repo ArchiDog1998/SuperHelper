@@ -41,6 +41,7 @@
                      Background="Transparent" BorderThickness="0"/>
         </Border>
 
+      
         <TextBlock Text="{Binding InstanceDescription}" HorizontalAlignment="Center"
                Visibility="{Binding Converter={StaticResource IsNotParamConverter}, Mode=OneWay}"
                ToolTip="{Binding Converter={StaticResource GetRuntimeConverter}, Mode=OneWay}"/>

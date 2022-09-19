@@ -1,13 +1,19 @@
-﻿using Grasshopper;
+﻿using GH_IO.Serialization;
+using Grasshopper;
 using Grasshopper.GUI;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Parameters.Hints;
 using Rhino.Display;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,10 +21,12 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 
 namespace SuperHelper
 {
@@ -118,7 +126,7 @@ namespace SuperHelper
         private void SaveClick(object sender, RoutedEventArgs e)
         {
             MenuReplacer.UrlDict[((GH_DocumentObject)DataContext).ComponentGuid.ToString()] = UrlTextBox.Text;
-            MenuReplacer.SaveToJson();
+            MenuReplacer.SaveUrlDictToJson();
         }
 
         private void GoClick(object sender, RoutedEventArgs e)
@@ -183,6 +191,67 @@ namespace SuperHelper
                 }
             }
             MotherGrid.Children.Add(new RhinoViewportHost());
+        }
+
+        private void SwitchButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is Button b)) return;
+            if (!(this.DataContext is GH_DocumentObject obj)) return;
+
+            //var url = @"https://github.com/ArchiDog1998/Grasshopper-Player-Hops-External-GH-Documents/raw/master/Circles%20On%20Sphere.gh";
+
+            if (ExampleList.Visibility == Visibility.Visible)
+            {
+                ExampleList.Visibility = Visibility.Collapsed;
+                ExampleData.Visibility = Visibility.Visible;
+                b.Content = "Save and Use";
+                ExampleData.ItemsSource = ExampleList.ItemsSource;
+            }
+            else
+            {
+                ExampleList.Visibility = Visibility.Visible;
+                ExampleData.Visibility = Visibility.Collapsed;
+                b.Content = "Edit";
+                
+                if(ExampleData.ItemsSource is ObservableCollection<HelpExample> set)
+                {
+                    var newSet = new ObservableCollection<HelpExample>(set.Where(s => s.IsValid));
+                    ExampleList.ItemsSource = newSet;
+                    MenuReplacer.UrlExDict[obj.ComponentGuid.ToString()] = newSet.Select(s => s.Path).ToArray();
+                    MenuReplacer.SaveUrlExToJson();
+                }
+            }
+        }
+
+        //private async void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        //{
+        //    if (!(sender is HelpExample ex)) return;
+        //    await ex.PasteFromArchive();
+        //}
+
+        private async void ListBoxItem_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (!(sender is ListViewItem it)) return;
+            if (!(it.DataContext is HelpExample ex)) return;
+
+            switch (e.ChangedButton)
+            {
+                case MouseButton.Left:
+                    await ex.PasteFromArchive();
+                    break;
+                case MouseButton.Right:
+                    await ex.CopyFromArchive();
+                    break;
+            }
+        }
+
+        private void RemoveButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is Button it)) return;
+            if (!(it.DataContext is HelpExample ex)) return;
+            if(!(ExampleData.ItemsSource is ObservableCollection<HelpExample> sets)) return;
+
+            sets.Remove(ex);
         }
     }
 }

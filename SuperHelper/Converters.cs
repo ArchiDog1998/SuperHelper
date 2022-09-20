@@ -165,6 +165,20 @@ namespace SuperHelper
         }
     }
 
+    [ValueConversion(typeof(GH_DocumentObject), typeof(bool))]
+    public class IsNullConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value != null;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
+
     [ValueConversion(typeof(System.Drawing.Bitmap), typeof(ImageSource))]
     public class BitmapConverter : IValueConverter
     {

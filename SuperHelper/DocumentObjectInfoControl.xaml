@@ -15,7 +15,7 @@
     <DockPanel>
         <local:InstanceDescControl  DockPanel.Dock="Top" DataContext="{Binding Mode=OneWay}"/>
         <ContentControl>
-            <!--<ContentControl.Style>
+            <ContentControl.Style>
                 <Style TargetType="ContentControl">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Converter={StaticResource IsParamConverter}, Mode=OneWay}" Value="True">
@@ -35,9 +35,7 @@
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </ContentControl.Style>-->
+            </ContentControl.Style>
         </ContentControl>
-
-
     </DockPanel>
 </UserControl>

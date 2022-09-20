@@ -195,8 +195,6 @@ namespace SuperHelper
 
         private void SwitchButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!(sender is Button b)) return;
-
             if (ExampleList.Visibility == Visibility.Visible)
             {
                 ExampleList.Visibility = Visibility.Collapsed;

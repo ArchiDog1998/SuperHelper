@@ -22,7 +22,7 @@ namespace SuperHelper
         public override Bitmap Icon => Properties.Resources.SuperHelperIcon_24;
 
         //Return a short string describing the purpose of this GHA library.
-        public override string Description => "Much better helper window for grasshopper";
+        public override string Description => "Much better helper control for grasshopper!";
 
         public override Guid Id => new Guid("A71D5B0A-9D5B-4E27-8933-BB83CB68066D");
 

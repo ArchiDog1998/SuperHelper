@@ -42,7 +42,7 @@
                 </wfi:WindowsFormsHost>
             </TabItem>
 
-            <TabItem Header="URL Help">
+            <TabItem Header="Web Help">
                 <DockPanel>
                     <Grid DockPanel.Dock="Top">
                         <Grid.ColumnDefinitions>

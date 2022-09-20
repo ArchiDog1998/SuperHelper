@@ -196,38 +196,56 @@ namespace SuperHelper
         private void SwitchButton_Click(object sender, RoutedEventArgs e)
         {
             if (!(sender is Button b)) return;
-            if (!(this.DataContext is GH_DocumentObject obj)) return;
-
-            //var url = @"https://github.com/ArchiDog1998/Grasshopper-Player-Hops-External-GH-Documents/raw/master/Circles%20On%20Sphere.gh";
 
             if (ExampleList.Visibility == Visibility.Visible)
             {
                 ExampleList.Visibility = Visibility.Collapsed;
                 ExampleData.Visibility = Visibility.Visible;
-                b.Content = "Save and Use";
+                ExampleEditButton.Content = "Save and Use";
                 ExampleData.ItemsSource = ExampleList.ItemsSource;
             }
             else
             {
-                ExampleList.Visibility = Visibility.Visible;
-                ExampleData.Visibility = Visibility.Collapsed;
-                b.Content = "Edit";
-                
-                if(ExampleData.ItemsSource is ObservableCollection<HelpExample> set)
-                {
-                    var newSet = new ObservableCollection<HelpExample>(set.Where(s => s.IsValid));
-                    ExampleList.ItemsSource = newSet;
-                    MenuReplacer.UrlExDict[obj.ComponentGuid.ToString()] = newSet.Select(s => s.Path).ToArray();
-                    MenuReplacer.SaveUrlExToJson();
-                }
+                SaveExampleValue(true);
             }
         }
 
-        //private async void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        //{
-        //    if (!(sender is HelpExample ex)) return;
-        //    await ex.PasteFromArchive();
-        //}
+        public void SaveExampleValue(bool setListSources)
+        {
+            if (!(this.DataContext is GH_DocumentObject obj)) return;
+
+            if (ExampleList.Visibility == Visibility.Visible) return;
+
+            ExampleList.Visibility = Visibility.Visible;
+            ExampleData.Visibility = Visibility.Collapsed;
+            ExampleEditButton.Content = "Edit";
+
+            if (ExampleData.ItemsSource is ObservableCollection<HelpExample> set)
+            {
+                var newList = new List<HelpExample>(set.Count);
+                foreach (HelpExample example in set)
+                {
+                    if (example.IsValid)
+                    {
+                        newList.Add(example);
+                    }
+                    else
+                    {
+                        example.Dispose();
+                    }
+                }
+
+                var newSet = new ObservableCollection<HelpExample>(newList);
+
+                //Save
+                MenuReplacer.UrlExDict[obj.ComponentGuid.ToString()] = newSet.Select(s => s.Path).ToArray();
+                MenuReplacer.SaveUrlExToJson();
+
+                //Add
+                if (setListSources) ExampleList.ItemsSource = newSet;
+                else newList.ForEach(s => s.Dispose());
+            }
+        }
 
         private async void ListBoxItem_MouseUp(object sender, MouseButtonEventArgs e)
         {
@@ -249,9 +267,10 @@ namespace SuperHelper
         {
             if (!(sender is Button it)) return;
             if (!(it.DataContext is HelpExample ex)) return;
-            if(!(ExampleData.ItemsSource is ObservableCollection<HelpExample> sets)) return;
+            if (!(ExampleData.ItemsSource is ObservableCollection<HelpExample> sets)) return;
 
             sets.Remove(ex);
+            ex.Dispose();
         }
     }
 }

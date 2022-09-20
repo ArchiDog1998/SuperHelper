@@ -182,6 +182,7 @@ namespace SuperHelper
                             _control.UrlTextBox.Text = "";
                         }
 
+                        _control.SaveExampleValue(false);
                         if (UrlExDict.TryGetValue(obj.ComponentGuid.ToString(), out string[] urls))
                         {
                             _control.ExampleList.ItemsSource = new ObservableCollection<HelpExample>(urls.Select(u => new HelpExample(u)));

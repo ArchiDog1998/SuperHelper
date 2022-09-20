@@ -332,12 +332,17 @@ namespace SuperHelper
             }
             return bytes;
         }
+        #endregion
 
+        ~HelpExample()
+        {
+            Dispose();
+        }
         public void Dispose()
         {
             _documentTask?.Dispose();    
             _bitmap?.Dispose();
         }
-        #endregion
+
     }
 }

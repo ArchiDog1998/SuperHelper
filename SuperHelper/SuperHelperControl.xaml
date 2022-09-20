@@ -61,22 +61,9 @@
                 </DockPanel>
             </TabItem>
 
-            <TabItem Header="Params Help">
-                <local:DocumentObjectInfoControl DataContext="{Binding Mode=OneWay}"/>
-            </TabItem>
-
-            <TabItem Header="Development Help">
-                <StackPanel Orientation="Vertical">
-                    <TextBox Text="{Binding Converter={StaticResource TypeInfoConverter}, Mode=OneWay}" IsReadOnly="True" Background="Transparent"
-                           HorizontalAlignment="Center" BorderThickness="0"/>
-                    <Button Content ="{Binding Converter={StaticResource TypeLoactionConverter}, Mode=OneWay}"
-                         Template="{StaticResource CornerButtonTemplate}"
-                        Click="OpenFileClick" ToolTip="Click to open File" HorizontalAlignment="Center"/>
-                </StackPanel>
-            </TabItem>
             <TabItem Header="Example">
                 <DockPanel>
-                    <Button DockPanel.Dock="Bottom" Content="Edit" Click="SwitchButton_Click" 
+                    <Button DockPanel.Dock="Bottom" Content="Edit" Click="SwitchButton_Click"  x:Name="ExampleEditButton"
                             Template="{StaticResource CornerButtonTemplate}" Margin="5"/>
 
                     <Grid>
@@ -142,7 +129,21 @@
                 </DockPanel>
 
             </TabItem>
-            
+
+            <TabItem Header="Params Help">
+                <local:DocumentObjectInfoControl DataContext="{Binding Mode=OneWay}"/>
+            </TabItem>
+
+            <TabItem Header="Development Help">
+                <StackPanel Orientation="Vertical">
+                    <TextBox Text="{Binding Converter={StaticResource TypeInfoConverter}, Mode=OneWay}" IsReadOnly="True" Background="Transparent"
+                           HorizontalAlignment="Center" BorderThickness="0"/>
+                    <Button Content ="{Binding Converter={StaticResource TypeLoactionConverter}, Mode=OneWay}"
+                         Template="{StaticResource CornerButtonTemplate}"
+                        Click="OpenFileClick" ToolTip="Click to open File" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </TabItem>
+
             <TabItem Header="Settings">
                 <DockPanel>
                     <Border DockPanel.Dock="Top" Style="{StaticResource ContentBorder}" CornerRadius="5" Margin="5" Padding="5">
@@ -207,9 +208,6 @@
 
 
             </TabItem>
-
         </TabControl>
     </Grid>
-
-
 </UserControl>

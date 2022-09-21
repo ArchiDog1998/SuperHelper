@@ -90,6 +90,8 @@ namespace SuperHelper
                     sender.Document.DeselectAll();
                     sender.Document.MergeDocument(gH_DocumentIO.Document);
                     sender.Document.UndoUtil.RecordAddObjectEvent("Copy", objects);
+
+                    MessageBox.Show("左键点击了，已经合并文档了！");
                 }
 
                 sender.Document.NewSolution(expireAllObjects: false);

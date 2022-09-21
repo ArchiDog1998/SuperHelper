@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Text;
+using Rhino.Commands;
 
 namespace SuperHelper
 {
@@ -75,29 +76,24 @@ namespace SuperHelper
                 //Download for first.
                 if(GetMachineCurrentLocation() == "CHN")
                 {
-                    if (!File.Exists(_location))
+                    try
                     {
-                        try
-                        {
-                            var bytes = client.DownloadData(@"https://raw.githubusercontent.com/ArchiDog1998/SuperHelper/master/urls.json");
-                            File.WriteAllBytes(_location, bytes);
-                        }
-                        catch
-                        {
-
-                        }
+                        var bytes = client.DownloadData(@"https://raw.githubusercontent.com/ArchiDog1998/SuperHelper/master/urls.json");
+                        UrlDict = ser.Deserialize<Dictionary<string, string>>(Encoding.Default.GetString(bytes));
                     }
-                    if (!File.Exists(_locationEx))
+                    catch
                     {
-                        try
-                        {
-                            var bytes = client.DownloadData(@"https://raw.githubusercontent.com/ArchiDog1998/SuperHelper/master/urlex.json");
-                            File.WriteAllBytes(_locationEx, bytes);
-                        }
-                        catch
-                        {
 
-                        }
+                    }
+
+                    try
+                    {
+                        var bytes = client.DownloadData(@"https://raw.githubusercontent.com/ArchiDog1998/SuperHelper/master/urlex.json");
+                        UrlExDict = ser.Deserialize<Dictionary<string, string[]>>(Encoding.Default.GetString(bytes));
+                    }
+                    catch
+                    {
+
                     }
                 }
 
@@ -105,22 +101,32 @@ namespace SuperHelper
                 if (File.Exists(_location))
                 {
                     string jsonStr = File.ReadAllText(_location);
+                    foreach (var pair in ser.Deserialize<Dictionary<string, string>>(jsonStr))
+                    {
+                        UrlDict[pair.Key] = pair.Value;
+                    }
+                }
 
-                    UrlDict = ser.Deserialize<Dictionary<string, string>>(jsonStr);
-                }
-                else
-                {
-                    UrlDict = new Dictionary<string, string>();
-                }
 
                 if (File.Exists(_locationEx))
                 {
                     string jsonStr = File.ReadAllText(_locationEx);
-                    UrlExDict = ser.Deserialize<Dictionary<string, string[]>>(jsonStr);
-                }
-                else
-                {
-                    UrlExDict = new Dictionary<string, string[]>();
+                    foreach (var pair in ser.Deserialize<Dictionary<string, string[]>>(jsonStr))
+                    {
+                        if(UrlExDict.TryGetValue(pair.Key, out var values))
+                        {
+                            var strs = new HashSet<string>(values);
+                            foreach (var s in pair.Value)
+                            {
+                                strs.Add(s);
+                            }
+                            UrlExDict[pair.Key] = strs.ToArray();
+                        }
+                        else
+                        {
+                            UrlExDict[pair.Key] = pair.Value;
+                        }
+                    }
                 }
             }
             catch (Exception ex)

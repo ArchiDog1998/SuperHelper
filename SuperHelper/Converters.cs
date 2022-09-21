@@ -14,7 +14,6 @@ using System.Windows.Media.Imaging;
 
 namespace SuperHelper
 {
-
     [ValueConversion(typeof(GH_DocumentObject), typeof(string))]
     public class TypeInfoConverter : IValueConverter
     {

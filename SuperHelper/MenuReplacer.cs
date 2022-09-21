@@ -12,19 +12,40 @@ using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace SuperHelper
 {
     public abstract class MenuReplacer : GH_DocumentObject
     {
+        private static readonly MethodInfo _htmlHelpInfo = typeof(GH_DocumentObject).GetRuntimeMethods().First(m => m.Name.Contains("HtmlHelp_Source"));
+
         private static readonly string _location = Path.Combine(Folders.SettingsFolder, "urls.json");
         private static readonly string _locationEx = Path.Combine(Folders.SettingsFolder, "urlex.json");
 
         internal static Dictionary<string, string> UrlDict = new Dictionary<string, string>();
         internal static Dictionary<string, string[]> UrlExDict = new Dictionary<string, string[]>();
 
-
         internal static SuperHelperControl _control = new SuperHelperControl();
+
+        [DllImport("kernel32.dll", ExactSpelling = true, CallingConvention = CallingConvention.StdCall, SetLastError = true)]
+        private static extern int GetUserGeoID(int geoClass);
+        [DllImport("kernel32.dll")]
+        private static extern int GetUserDefaultLCID();
+
+        [DllImport("kernel32.dll")]
+        private static extern int GetGeoInfo(int geoid, int geoType, StringBuilder lpGeoData, int cchData, int langid);
+
+        public static string GetMachineCurrentLocation()
+        {
+            int geoId = GetUserGeoID(16);
+            int lcid = GetUserDefaultLCID();
+            StringBuilder locationBuffer = new StringBuilder(100);
+            GetGeoInfo(geoId, 5, locationBuffer, locationBuffer.Capacity, lcid);
+
+            return locationBuffer.ToString().Trim();
+        }
 
         protected MenuReplacer(IGH_InstanceDescription tag) : base(tag)
         {
@@ -45,14 +66,46 @@ namespace SuperHelper
         public static bool Init()
         {
             new HighLightConduit().Enabled = true;
+            JavaScriptSerializer ser = new JavaScriptSerializer();
+            var client =  new System.Net.WebClient();
 
             //Read from json.
             try
             {
+                //Download for first.
+                if(GetMachineCurrentLocation() == "CHN")
+                {
+                    if (!File.Exists(_location))
+                    {
+                        try
+                        {
+                            var bytes = client.DownloadData(@"https://raw.githubusercontent.com/ArchiDog1998/SuperHelper/master/urls.json");
+                            File.WriteAllBytes(_location, bytes);
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                    if (!File.Exists(_locationEx))
+                    {
+                        try
+                        {
+                            var bytes = client.DownloadData(@"https://raw.githubusercontent.com/ArchiDog1998/SuperHelper/master/urlex.json");
+                            File.WriteAllBytes(_locationEx, bytes);
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                }
+
+
                 if (File.Exists(_location))
                 {
                     string jsonStr = File.ReadAllText(_location);
-                    JavaScriptSerializer ser = new JavaScriptSerializer();
+
                     UrlDict = ser.Deserialize<Dictionary<string, string>>(jsonStr);
                 }
                 else
@@ -63,7 +116,6 @@ namespace SuperHelper
                 if (File.Exists(_locationEx))
                 {
                     string jsonStr = File.ReadAllText(_locationEx);
-                    JavaScriptSerializer ser = new JavaScriptSerializer();
                     UrlExDict = ser.Deserialize<Dictionary<string, string[]>>(jsonStr);
                 }
                 else
@@ -170,6 +222,16 @@ namespace SuperHelper
                     {
                         if (UrlDict.TryGetValue(obj.ComponentGuid.ToString(), out string url))
                         {
+                            _control.UrlTextBox.Text = url;
+
+                            if (_control.myWeb.Source == null)
+                            {
+                                _control.myWeb.Source = new Uri(url);
+                            }
+                        }
+                        else if (_htmlHelpInfo.Invoke(obj, new object[0]) is string s && s.StartsWith("GOTO:", StringComparison.OrdinalIgnoreCase))
+                        {
+                            url = s.Substring(5);
                             _control.UrlTextBox.Text = url;
 
                             if (_control.myWeb.Source == null)

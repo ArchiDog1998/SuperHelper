@@ -324,7 +324,14 @@ namespace SuperHelper
             byte[] bytes = new byte[0];
             if (path.StartsWith("http", StringComparison.OrdinalIgnoreCase))
             {
-                bytes = new System.Net.WebClient().DownloadData(path);
+                try
+                {
+                    bytes = new System.Net.WebClient().DownloadData(path);
+                }
+                catch
+                {
+
+                }
             }
             else if (File.Exists(path))
             {
@@ -343,6 +350,5 @@ namespace SuperHelper
             _documentTask?.Dispose();    
             _bitmap?.Dispose();
         }
-
     }
 }

@@ -9,6 +9,7 @@
             x:Name="Father"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -23,6 +24,7 @@
             <local:IsNullConverter x:Key="IsNullConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
+    
     <Grid x:Name="MotherGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -74,10 +76,9 @@
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListBoxItem">
                                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                                    <!--<Setter Property="Height" Value="{Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type ScrollContentPresenter}}}"/>-->
-                                    <!--<EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick"/>-->
-                                    <EventSetter Event="MouseUp" Handler="ListBoxItem_MouseUp"/>
+                                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                                        <Setter Property="ToolTip" Value="Left click to drag to add, right click to copy"/>
+                                        <EventSetter Event="MouseUp" Handler="ListBoxItem_MouseUp"/>
                                 </Style>
                             </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>

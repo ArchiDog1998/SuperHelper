@@ -63,6 +63,12 @@ namespace SuperHelper
             }
         }
 
+        public string FileManageWorkDirectorey
+        {
+            get => Instances.Settings.GetValue(nameof(FileManageWorkDirectorey), "Please enter folder.");
+            set => Instances.Settings.SetValue(nameof(FileManageWorkDirectorey), value);
+        }
+
         private bool _autoTargetDefault = true;
 
         public bool AutoTarget
@@ -253,7 +259,7 @@ namespace SuperHelper
             switch (e.ChangedButton)
             {
                 case MouseButton.Left:
-                    await ex.PasteFromArchive();
+                    await ex.PasteFromArchive(false);
                     break;
                 case MouseButton.Right:
                     await ex.CopyFromArchive();
@@ -269,6 +275,71 @@ namespace SuperHelper
 
             sets.Remove(ex);
             ex.Dispose();
+        }
+
+        private async void Lable_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (!(sender is Label it)) return;
+            if (!(it.Content is HelpExampleControl co)) return;
+            if (!(co.DataContext is HelpExample ex)) return;
+
+            switch (e.ChangedButton)
+            {
+                case MouseButton.Left:
+                    await ex.PasteFromArchive(true);
+                    break;
+                case MouseButton.Right:
+                    await ex.PasteFromArchive(false);
+                    break;
+            }
+        }
+
+
+    }
+
+
+
+    public class StretchingTreeViewItem : TreeViewItem
+    {
+        public StretchingTreeViewItem()
+        {
+            this.Loaded += new RoutedEventHandler(StretchingTreeViewItem_Loaded);
+        }
+
+        private void StretchingTreeViewItem_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (this.VisualChildrenCount > 0)
+            {
+                Grid grid = this.GetVisualChild(0) as Grid;
+                if (grid != null && grid.ColumnDefinitions.Count == 3)
+                {
+                    grid.ColumnDefinitions.RemoveAt(2);
+                    grid.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
+                }
+            }
+        }
+
+        protected override DependencyObject GetContainerForItemOverride()
+        {
+            return new StretchingTreeViewItem();
+        }
+
+        protected override bool IsItemItsOwnContainerOverride(object item)
+        {
+            return item is StretchingTreeViewItem;
+        }
+    }
+
+    public class StretchingTreeView : TreeView
+    {
+        protected override DependencyObject GetContainerForItemOverride()
+        {
+            return new StretchingTreeViewItem();
+        }
+
+        protected override bool IsItemItsOwnContainerOverride(object item)
+        {
+            return item is StretchingTreeViewItem;
         }
     }
 }

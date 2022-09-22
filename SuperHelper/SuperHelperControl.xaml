@@ -22,6 +22,14 @@
             <local:ObjectDescriptionConverter x:Key="ObjectDescriptionConverter"/>
             <local:BitmapConverter x:Key="BitmapConverter"/>
             <local:IsNullConverter x:Key="IsNullConverter"/>
+            <local:SubItemConverter x:Key="SubItemConverter"/>
+            <local:FolderNameConverter x:Key="FolderNameConverter"/>
+            <local:IsGHFileConverter x:Key="IsGHFileConverter"/>
+            <local:CreateHelpExampleConverter x:Key="CreateHelpExampleConverter"/>
+            <local:IconImageConverter x:Key="IconImageConverter"/>
+
+            <SolidColorBrush x:Key="hoverBrush" Opacity=".3" 
+             Color="LightSkyBlue"/>
         </ResourceDictionary>
     </UserControl.Resources>
     
@@ -37,14 +45,14 @@
 
         <GridSplitter Grid.Row="1" Height="5" Margin="0 2 0 2" HorizontalAlignment="Stretch" ShowsPreview="True"/>
 
-        <TabControl Grid.Row="2" IsEnabled="{Binding Converter={StaticResource IsNullConverter}}">
-            <TabItem Header="Origin Help">
+        <TabControl Grid.Row="2">
+            <TabItem Header="Origin Help" IsEnabled="{Binding Converter={StaticResource IsNullConverter}}">
                 <wfi:WindowsFormsHost>
                     <wf:WebBrowser x:Name="oldUrl"/>
                 </wfi:WindowsFormsHost>
             </TabItem>
 
-            <TabItem Header="Web Help">
+            <TabItem Header="Web Help" IsEnabled="{Binding Converter={StaticResource IsNullConverter}}">
                 <DockPanel>
                     <Grid DockPanel.Dock="Top">
                         <Grid.ColumnDefinitions>
@@ -64,7 +72,7 @@
                 </DockPanel>
             </TabItem>
 
-            <TabItem Header="Example">
+            <TabItem Header="Example" IsEnabled="{Binding Converter={StaticResource IsNullConverter}}">
                 <DockPanel>
                     <Button DockPanel.Dock="Bottom" Content="Edit" Click="SwitchButton_Click"  x:Name="ExampleEditButton"
                             Template="{StaticResource CornerButtonTemplate}" Margin="5"/>
@@ -72,78 +80,59 @@
                     <local:InstanceDescControl DockPanel.Dock="Top" DataContext="{Binding Mode=OneWay}"/>
                     <Border Style="{StaticResource ContentBorder}">
                         <Grid>
-                          <ListView BorderThickness="0" x:Name="ExampleList" Background="Transparent">
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListBoxItem">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <ListView BorderThickness="0" x:Name="ExampleList" Background="Transparent">
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                         <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                                         <Setter Property="ToolTip" Value="Left click to drag to add, right click to copy"/>
                                         <EventSetter Event="MouseUp" Handler="ListBoxItem_MouseUp"/>
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <DockPanel>
-                                        <Image DockPanel.Dock="Left" 
-                                           Source="{Binding Thumbnail, Converter={StaticResource BitmapConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <local:HelpExampleControl/>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
 
-                                        <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Center"  Orientation="Horizontal">
-                                            <TextBlock FontWeight="Bold" FontSize="20"
-                                               Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow"/>
-                                            <TextBlock FontWeight="Bold" FontSize="16" VerticalAlignment="Bottom"
-                                               Text="{Binding Author, UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow"/>
-                                        </StackPanel>
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                            </ListView>
 
-                                        <Grid>
-                                            <TextBlock Margin="10" HorizontalAlignment="Center" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow"/>
-                                        </Grid>
-                                    </DockPanel>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <VirtualizingStackPanel/>
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
-                        </ListView>
-
-                        <DataGrid AutoGenerateColumns="False" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="WhiteSmoke" CanUserAddRows="True" x:Name="ExampleData"  Visibility="Collapsed"
+                            <DataGrid AutoGenerateColumns="False" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="WhiteSmoke" CanUserAddRows="True" x:Name="ExampleData"  Visibility="Collapsed"
                                   Background="Transparent" BorderThickness="0">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Path" Binding="{Binding Path, Mode=TwoWay}">
-                                    <DataGridTextColumn.ElementStyle>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="VerticalAlignment" Value="Center"/>
-                                            <Setter Property="HorizontalAlignment" Value="Right"/>
-                                        </Style>
-                                    </DataGridTextColumn.ElementStyle>
-                                </DataGridTextColumn>
-                                <DataGridTemplateColumn Header="Remove">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <Button Content="Remove" Click="RemoveButton_Click" Template="{StaticResource CornerButtonTemplate}" />
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                            </DataGrid.Columns>
-                        </DataGrid>
-         
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Path" Binding="{Binding Path, Mode=TwoWay}">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTemplateColumn Header="Remove">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Content="Remove" Click="RemoveButton_Click" Template="{StaticResource CornerButtonTemplate}" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
                         </Grid>
-                        <!--<TextBlock Text="Please Edit or download the example url." VerticalAlignment="Top" HorizontalAlignment="Center"/>-->
-
-
                     </Border>
-
                 </DockPanel>
-
             </TabItem>
 
-            <TabItem Header="Params Help">
+            <TabItem Header="Params Help" IsEnabled="{Binding Converter={StaticResource IsNullConverter}}">
                 <local:DocumentObjectInfoControl DataContext="{Binding Mode=OneWay}"/>
             </TabItem>
 
-            <TabItem Header="Development Help">
+
+            <TabItem Header="Development Help" IsEnabled="{Binding Converter={StaticResource IsNullConverter}}">
                 <StackPanel Orientation="Vertical">
                     <TextBox Text="{Binding Converter={StaticResource TypeInfoConverter}, Mode=OneWay}" IsReadOnly="True" Background="Transparent"
                            HorizontalAlignment="Center" BorderThickness="0"/>
@@ -151,6 +140,77 @@
                          Template="{StaticResource CornerButtonTemplate}"
                         Click="OpenFileClick" ToolTip="Click to open File" HorizontalAlignment="Center"/>
                 </StackPanel>
+            </TabItem>
+            
+            <TabItem Header="File Manager">
+                <DockPanel>
+
+                    <DockPanel  DockPanel.Dock="Top" Margin="8 0">
+                        <TextBlock DockPanel.Dock="Left" Text="Directory: " VerticalAlignment="Center" FontWeight="Bold" />
+                        <TextBox x:Name="inputDir" HorizontalAlignment="Stretch" Text="{Binding ElementName=Father, Path=FileManageWorkDirectorey, Mode=TwoWay}"
+                             Padding="5" BorderThickness="0"/>
+                    </DockPanel>
+
+                    <Border Style="{StaticResource ContentBorder}">
+                        
+                        <local:StretchingTreeView ItemsSource="{Binding ElementName=inputDir, Path=Text, Converter={StaticResource SubItemConverter}, Mode=OneWay}" Background="Transparent" BorderThickness="0">
+                            <TreeView.ItemContainerStyle>
+                                <Style TargetType="TreeViewItem">
+
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource hoverBrush}" />
+                                            <Setter Property="BorderBrush" Value="LightSkyBlue"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                    <Setter Property="BorderThickness" Value="1"/>
+                                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="Focusable" Value="False" />
+                                    <Setter Property="IsSelected" Value="False" />
+                                    <Setter Property="ItemsPanel">
+                                        <Setter.Value>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel/>
+                                            </ItemsPanelTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </TreeView.ItemContainerStyle>
+                            <TreeView.ItemTemplate>
+                                <HierarchicalDataTemplate ItemsSource="{Binding Converter={StaticResource SubItemConverter}, Mode=OneWay}">
+                                    <Label  MouseUp="Lable_MouseUp" HorizontalContentAlignment="Stretch">
+                                        <Label.Style>
+                                            <Style TargetType="Label">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Converter={StaticResource IsGHFileConverter}}" Value="True">
+                                                        <Setter Property="Content">
+                                                            <Setter.Value>
+                                                                <local:HelpExampleControl DataContext="{Binding Converter={StaticResource CreateHelpExampleConverter}}"
+                                                                                          ToolTip="Left click to add hops, right click to add document"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Converter={StaticResource IsGHFileConverter}}" Value="False">
+                                                        <Setter Property="Content">
+                                                            <Setter.Value>
+                                                                <DockPanel>
+                                                                    <Image Width="20" Height="20" DockPanel.Dock="Left" Source="{Binding Converter={StaticResource IconImageConverter}, Mode=OneWay}"/>
+                                                                    <TextBlock VerticalAlignment="Center" Margin=" 5 0 0 0" Text="{Binding Converter={StaticResource FolderNameConverter}, Mode=OneWay}" FontWeight="Bold"/>
+                                                                </DockPanel>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Label.Style>
+                                    </Label>
+                                </HierarchicalDataTemplate>
+                            </TreeView.ItemTemplate>
+                        </local:StretchingTreeView>
+                    </Border>
+                </DockPanel>
+                
             </TabItem>
 
             <TabItem Header="Settings">

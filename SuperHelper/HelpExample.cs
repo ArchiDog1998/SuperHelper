@@ -18,20 +18,26 @@ using System.Reflection;
 using Grasshopper;
 using System.Windows.Shapes;
 using System.ComponentModel;
+using Grasshopper.Kernel.Data;
 
 namespace SuperHelper
 {
     public class HelpExample : IDisposable, INotifyPropertyChanged
     {
+        private static readonly Guid HopsGuid = new Guid("C69BB52C-88BA-4640-B69F-188D111029E8");
         public class GH_CopyInteraction : GH_DragInteraction
         {
             private static readonly FieldInfo _modeInfo = typeof(GH_DragInteraction).GetRuntimeFields().First(f => f.Name.Contains("m_mode"));
             private static readonly FieldInfo _attInfo = typeof(GH_DragInteraction).GetRuntimeFields().First(f => f.Name.Contains("m_att"));
             private static readonly FieldInfo _anchorsInfo = typeof(GH_DragInteraction).GetRuntimeFields().First(f => f.Name.Contains("m_anchors"));
             private GH_Document _doc;
-            public GH_CopyInteraction(GH_Canvas canvas, GH_Document doc, GH_CanvasMouseEvent mouseEvent)
+            private static PropertyInfo _remoteDefinitionLocationInfo;
+            private string _path;
+
+            internal GH_CopyInteraction(GH_Canvas canvas, GH_Document doc, GH_CanvasMouseEvent mouseEvent, string path)
                 : base(canvas, mouseEvent)
             {
+                _path = path;
                 _doc = doc;
                 _modeInfo.SetValue(this, 1);
 
@@ -40,10 +46,7 @@ namespace SuperHelper
 
                 foreach (IGH_DocumentObject @object in doc.Objects)
                 {
-                    //if (!m_att.Contains(@object.Attributes))
-                    {
-                        AddAttribute(@object.Attributes);
-                    }
+                    AddAttribute(@object.Attributes);
                 }
                 var atts = (List<IGH_Attributes>)_attInfo.GetValue(this);
 
@@ -83,15 +86,32 @@ namespace SuperHelper
                         gH_DocumentIO.Document.Objects[j].Attributes.ExpireLayout();
                         gH_DocumentIO.Document.Objects[j].Attributes.PerformLayout();
                     }
+
                     gH_DocumentIO.Document.SelectAll();
                     gH_DocumentIO.Document.ExpireSolution();
                     gH_DocumentIO.Document.MutateAllIds();
-                    IEnumerable<IGH_DocumentObject> objects = gH_DocumentIO.Document.Objects;
-                    sender.Document.DeselectAll();
-                    sender.Document.MergeDocument(gH_DocumentIO.Document);
-                    sender.Document.UndoUtil.RecordAddObjectEvent("Copy", objects);
+                    
+                    if (string.IsNullOrEmpty(_path))
+                    {
+                        IEnumerable<IGH_DocumentObject> objects = gH_DocumentIO.Document.Objects;
+                        sender.Document.DeselectAll();
+                        sender.Document.MergeDocument(gH_DocumentIO.Document);
+                        sender.Document.UndoUtil.RecordAddObjectEvent("Copy", objects);
+                    }
+                    else
+                    {
+                        var pivot = gH_DocumentIO.Document.Objects.First(o => o.ComponentGuid == HopsGuid).Attributes.Pivot;
 
-                    MessageBox.Show("左键点击了，已经合并文档了！");
+                        Instances.ActiveCanvas.InstantiateNewObject(HopsGuid, pivot, false);
+
+                        var hop = Instances.ActiveCanvas.Document.Objects.Last();
+                        if (_remoteDefinitionLocationInfo == null)
+                        {
+                            _remoteDefinitionLocationInfo = hop.GetType().GetRuntimeProperties().First(p => p.Name.Contains("RemoteDefinitionLocation"));
+                        }
+
+                        _remoteDefinitionLocationInfo.SetValue(hop, _path);
+                    }
                 }
 
                 sender.Document.NewSolution(expireAllObjects: false);
@@ -193,28 +213,39 @@ namespace SuperHelper
 
 
         #region Paste
-        public async Task PasteFromArchive()
+        public async Task PasteFromArchive(bool isHops)
         {
             var result = await CheckForDocument();
             if (!result) return;
 
-            float x = 0;
-            float y = 0;
-            var count = _doc.ObjectCount;
-            foreach (var obj in _doc.Objects)
+            GH_Document document = _doc;
+            string path = string.Empty;
+            if (isHops)
             {
-                x += obj.Attributes.Pivot.X / count;
-                y += obj.Attributes.Pivot.Y / count;
+                document = new GH_Document();
+                var hop = Instances.ComponentServer.EmitObject(HopsGuid);
+
+                hop.CreateAttributes();
+                hop.Attributes.Pivot = default(PointF);
+                hop.Attributes.ExpireLayout();
+                hop.Attributes.PerformLayout();
+
+                document.AddObject(hop, true);
+
+                path = Path;
             }
 
+            var rect = document.BoundingBox();
+            var pivot = new PointF(rect.X + rect.Width/2, rect.Y + rect.Height/2);
 
-            if (!Grasshopper.Instances.ActiveCanvas.IsDocument)
+
+            if (!Instances.ActiveCanvas.IsDocument)
             {
-                Grasshopper.Instances.ActiveCanvas.Document = Instances.DocumentServer.AddNewDocument();
+                Instances.ActiveCanvas.Document = Instances.DocumentServer.AddNewDocument();
             }
 
-            new GH_CopyInteraction(Grasshopper.Instances.ActiveCanvas, _doc,
-                new GH_CanvasMouseEvent(new Point(), new PointF(x, y), System.Windows.Forms.MouseButtons.Left));
+            new GH_CopyInteraction(Instances.ActiveCanvas, document,
+                new GH_CanvasMouseEvent(new Point(), pivot, System.Windows.Forms.MouseButtons.Left), path);
         }
 
         public async Task CopyFromArchive()

@@ -2,13 +2,17 @@
 using Grasshopper.Kernel.Data;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -199,5 +203,139 @@ namespace SuperHelper
         {
             return null;
         }
+    }
+
+    [ValueConversion(typeof(string), typeof(string[]))]
+    public class SubItemConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return new string[0];
+            if (!(value is string path)) return new string[0];
+            if (!Directory.Exists(path)) return new string[0];
+
+            //var file = Directory.GetFiles(path, "*.gh");
+            var all = Directory.GetDirectories(path).Union(Directory.GetFiles(path, "*.gh"));
+            return all;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
+
+    [ValueConversion(typeof(string), typeof(string))]
+    public class FolderNameConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return null;
+            if (!(value is string path)) return null;
+            //if (!Directory.Exists(path)) return null;
+
+            return path.Split('\\').Last();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
+
+    [ValueConversion(typeof(string), typeof(bool))]
+    public class IsGHFileConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return null;
+            if (!(value is string path)) return null;
+
+            return path.EndsWith(".gh");
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
+
+    [ValueConversion(typeof(string), typeof(bool))]
+    public class CreateHelpExampleConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return null;
+            if (!(value is string path)) return null;
+
+            return new HelpExample(path);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
+
+    [ValueConversion(typeof(string), typeof(ImageSource))]
+
+    public class IconImageConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return null;
+            if (!(value is string path)) return null;
+
+            var bitmap = ExtractFromPath(path).ToBitmap();
+            IntPtr hBitmap = bitmap.GetHbitmap();
+
+            ImageSource wpfBitmap = Imaging.CreateBitmapSourceFromHBitmap(
+                hBitmap,
+                IntPtr.Zero,
+                Int32Rect.Empty,
+                BitmapSizeOptions.FromEmptyOptions());
+
+            if (!DeleteObject(hBitmap))
+            {
+                throw new Win32Exception();
+            }
+
+            return wpfBitmap;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static System.Drawing.Icon ExtractFromPath(string path)
+        {
+            SHFILEINFO shinfo = new SHFILEINFO();
+            SHGetFileInfo(
+                path,
+                0, ref shinfo, (uint)Marshal.SizeOf(shinfo),
+                SHGFI_ICON | SHGFI_LARGEICON);
+            return System.Drawing.Icon.FromHandle(shinfo.hIcon);
+        }
+
+        //Struct used by SHGetFileInfo function
+        [StructLayout(LayoutKind.Sequential)]
+        private struct SHFILEINFO
+        {
+            public IntPtr hIcon;
+            public int iIcon;
+            public uint dwAttributes;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
+            public string szDisplayName;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
+            public string szTypeName;
+        };
+        [DllImport("gdi32.dll", SetLastError = true)]
+        private static extern bool DeleteObject(IntPtr hObject);
+        [DllImport("shell32.dll")]
+        private static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes, ref SHFILEINFO psfi, uint cbSizeFileInfo, uint uFlags);
+
+        private const uint SHGFI_ICON = 0x100;
+        private const uint SHGFI_LARGEICON = 0x0;
     }
 }

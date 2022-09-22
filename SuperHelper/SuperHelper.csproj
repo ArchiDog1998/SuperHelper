@@ -2,7 +2,7 @@
 	
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
-    <Version>1.1.4</Version>
+    <Version>1.1.5</Version>
     <Title>SuperHelper</Title>
     <Description>Much better help window for grasshoopper</Description>
     <TargetExt>.gha</TargetExt>

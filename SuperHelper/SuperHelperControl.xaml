@@ -45,7 +45,7 @@
 
         <GridSplitter Grid.Row="1" Height="5" Margin="0 2 0 2" HorizontalAlignment="Stretch" ShowsPreview="True"/>
 
-        <TabControl Grid.Row="2">
+        <TabControl Grid.Row="2" SelectedIndex="5">
             <TabItem Header="Origin Help" IsEnabled="{Binding Converter={StaticResource IsNullConverter}}">
                 <wfi:WindowsFormsHost>
                     <wf:WebBrowser x:Name="oldUrl"/>

@@ -185,7 +185,7 @@ namespace SuperHelper
             }
         }
 
-        private string _fileName;
+        private string _fileName = "Loading";
 
         public string FileName
         {

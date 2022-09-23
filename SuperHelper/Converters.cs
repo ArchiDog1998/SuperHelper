@@ -286,7 +286,10 @@ namespace SuperHelper
             if (value == null) return null;
             if (!(value is string path)) return null;
 
-            var bitmap = ExtractFromPath(path).ToBitmap();
+            var icon = ExtractFromPath(path);
+            if (icon == null) return null;
+            var bitmap = icon.ToBitmap();
+
             IntPtr hBitmap = bitmap.GetHbitmap();
 
             ImageSource wpfBitmap = Imaging.CreateBitmapSourceFromHBitmap(
@@ -315,6 +318,8 @@ namespace SuperHelper
                 path,
                 0, ref shinfo, (uint)Marshal.SizeOf(shinfo),
                 SHGFI_ICON | SHGFI_LARGEICON);
+           if(shinfo.hIcon == IntPtr.Zero) return null;
+            
             return System.Drawing.Icon.FromHandle(shinfo.hIcon);
         }
 

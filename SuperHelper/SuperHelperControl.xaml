@@ -131,7 +131,6 @@
                 <local:DocumentObjectInfoControl DataContext="{Binding Mode=OneWay}"/>
             </TabItem>
 
-
             <TabItem Header="Development Help" IsEnabled="{Binding Converter={StaticResource IsNullConverter}}">
                 <StackPanel Orientation="Vertical">
                     <TextBox Text="{Binding Converter={StaticResource TypeInfoConverter}, Mode=OneWay}" IsReadOnly="True" Background="Transparent"
@@ -144,7 +143,6 @@
             
             <TabItem Header="File Manager">
                 <DockPanel>
-
                     <DockPanel  DockPanel.Dock="Top" Margin="8 0">
                         <TextBlock DockPanel.Dock="Left" Text="Directory: " VerticalAlignment="Center" FontWeight="Bold" />
                         <TextBox x:Name="inputDir" HorizontalAlignment="Stretch" Text="{Binding ElementName=Father, Path=FileManageWorkDirectorey, Mode=TwoWay}"
@@ -175,10 +173,12 @@
                                             </ItemsPanelTemplate>
                                         </Setter.Value>
                                     </Setter>
+                                    <EventSetter Event="Loaded" Handler="TreeViewItem_Loaded"/>
+                                    <EventSetter Event="Expanded" Handler="TreeViewItem_Expanded"/>
                                 </Style>
                             </TreeView.ItemContainerStyle>
                             <TreeView.ItemTemplate>
-                                <HierarchicalDataTemplate ItemsSource="{Binding Converter={StaticResource SubItemConverter}, Mode=OneWay}">
+                                <HierarchicalDataTemplate>
                                     <Label  MouseUp="Lable_MouseUp" HorizontalContentAlignment="Stretch">
                                         <Label.Style>
                                             <Style TargetType="Label">

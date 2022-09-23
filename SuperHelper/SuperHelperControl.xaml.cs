@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -294,7 +295,31 @@ namespace SuperHelper
             }
         }
 
+        private void TreeViewItem_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is TreeViewItem item)) return;
+            if (!(item.DataContext is string path)) return;
 
+            item.ItemsSource = File.Exists(path) ? new string[0] : new string[] { string.Empty };
+        }
+
+        private void TreeViewItem_Expanded(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is TreeViewItem item)) return;
+            if (!(item.DataContext is string path)) return;
+
+            if (item.ItemsSource is string[] items && items.Length == 1 && string.IsNullOrEmpty(items[0]))
+            {
+                if (!Directory.Exists(path)) 
+                {
+                    item.ItemsSource = new string[0];
+                }
+                else
+                {
+                    item.ItemsSource = Directory.GetDirectories(path).Union(Directory.GetFiles(path, "*.gh"));
+                }
+            }
+        }
     }
 
 

@@ -67,15 +67,21 @@
                         <Button Grid.Column="3" Content="Go" Click="GoClick" Margin="3 0 0 0" Template="{StaticResource CornerButtonTemplate}"/>
                     </Grid>
 
-
                     <WebBrowser Grid.Row="1" Grid.Column="0"  Grid.ColumnSpan="3" x:Name="myWeb" Navigated="myWeb_Navigated"/>
                 </DockPanel>
             </TabItem>
 
             <TabItem Header="Example" IsEnabled="{Binding Converter={StaticResource IsNullConverter}}">
                 <DockPanel>
-                    <Button DockPanel.Dock="Bottom" Content="Edit" Click="SwitchButton_Click"  x:Name="ExampleEditButton"
+
+                    <DockPanel DockPanel.Dock="Bottom">
+                        <Button DockPanel.Dock="Left" Content="Edit" Click="SwitchButton_Click"  x:Name="ExampleEditButton"
                             Template="{StaticResource CornerButtonTemplate}" Margin="5"/>
+
+                        <Slider x:Name="ExampleHeightSlider" Minimum="20" Maximum="150" Value="60" VerticalAlignment="Center"
+                                ToolTip="Example item's height." Margin="5 0"/>
+                    </DockPanel>
+
 
                     <local:InstanceDescControl DockPanel.Dock="Top" DataContext="{Binding Mode=OneWay}"/>
                     <Border Style="{StaticResource ContentBorder}">
@@ -91,7 +97,7 @@
                                 </ListView.ItemContainerStyle>
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <local:HelpExampleControl/>
+                                        <local:HelpExampleControl MaxHeight="{Binding ElementName= ExampleHeightSlider, Path=Value}"/>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
 
@@ -145,13 +151,20 @@
                 <DockPanel>
                     <DockPanel  DockPanel.Dock="Top" Margin="8 0">
                         <TextBlock DockPanel.Dock="Left" Text="Directory: " VerticalAlignment="Center" FontWeight="Bold" />
+
+                        <Button DockPanel.Dock="Right" Content="Update" Template="{StaticResource CornerButtonTemplate}" HorizontalAlignment="Center"
+                                Click="UpdateTreeButton_Click"/>
+
                         <TextBox x:Name="inputDir" HorizontalAlignment="Stretch" Text="{Binding ElementName=Father, Path=FileManageWorkDirectorey, Mode=TwoWay}"
                              Padding="5" BorderThickness="0"/>
                     </DockPanel>
 
+                    <Slider DockPanel.Dock="Bottom" x:Name="FileHeightSlider" Minimum="20" Maximum="150" Value="60" VerticalAlignment="Center" Margin="5 0"
+                                ToolTip="File item's height."/>
                     <Border Style="{StaticResource ContentBorder}">
                         
-                        <local:StretchingTreeView ItemsSource="{Binding ElementName=inputDir, Path=Text, Converter={StaticResource SubItemConverter}, Mode=OneWay}" Background="Transparent" BorderThickness="0">
+                        <local:StretchingTreeView ItemsSource="{Binding ElementName=inputDir, Path=Text, Converter={StaticResource SubItemConverter}, Mode=OneWay, UpdateSourceTrigger=Explicit}"
+                                                  x:Name="DirectoryTree" Background="Transparent" BorderThickness="0">
                             <TreeView.ItemContainerStyle>
                                 <Style TargetType="TreeViewItem">
 
@@ -187,7 +200,8 @@
                                                         <Setter Property="Content">
                                                             <Setter.Value>
                                                                 <local:HelpExampleControl DataContext="{Binding Converter={StaticResource CreateHelpExampleConverter}}"
-                                                                                          ToolTip="Left click to add hops, right click to add document"/>
+                                                                                          ToolTip="Left click to add hops, right click to add document."
+                                                                                          MaxHeight="{Binding ElementName=FileHeightSlider, Path=Value}"/>
                                                             </Setter.Value>
                                                         </Setter>
                                                     </DataTrigger>

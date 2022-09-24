@@ -22,7 +22,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Grasshopper" Version="6.12.19029.6381" IncludeAssets="compile;build" />
+    <PackageReference Include="Grasshopper" Version="7.6.21127.19001" IncludeAssets="compile;build" />
   </ItemGroup>
   
   <ItemGroup>

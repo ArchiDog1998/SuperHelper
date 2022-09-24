@@ -230,14 +230,14 @@ namespace SuperHelper
                 var newList = new List<HelpExample>(set.Count);
                 foreach (HelpExample example in set)
                 {
-                    if (example.IsValid)
-                    {
+                    //if (example.IsValid)
+                    //{
                         newList.Add(example);
-                    }
-                    else
-                    {
-                        example.Dispose();
-                    }
+                    //}
+                    //else
+                    //{
+                    //    example.Dispose();
+                    //}
                 }
 
                 var newSet = new ObservableCollection<HelpExample>(newList);
@@ -316,9 +316,21 @@ namespace SuperHelper
                 }
                 else
                 {
-                    item.ItemsSource = Directory.GetDirectories(path).Union(Directory.GetFiles(path, "*.gh"));
+                    try
+                    {
+                        item.ItemsSource = Directory.GetDirectories(path).Union(Directory.GetFiles(path, "*.gh"));
+                    }
+                    catch
+                    {
+                        item.ItemsSource = new string[0];
+                    }
                 }
             }
+        }
+
+        private void UpdateTreeButton_Click(object sender, RoutedEventArgs e)
+        {
+            DirectoryTree.GetBindingExpression(StretchingTreeView.ItemsSourceProperty)?.UpdateTarget();
         }
     }
 

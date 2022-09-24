@@ -191,6 +191,12 @@ namespace SuperHelper
 
                 _control.Dispatcher.Invoke(() =>
                 {
+                    bool shouldSwitch = true;
+                    if(_control.DataContext is GH_DocumentObject docObj)
+                    {
+                        if (docObj.ComponentGuid == obj.ComponentGuid) shouldSwitch = false;
+                    }
+
                     _control.DataContext = null;
 
                     try
@@ -201,16 +207,17 @@ namespace SuperHelper
                     {
 
                     }
+                    if (!shouldSwitch) return;
 
+                    string html = (string)_htmlHelpInfo.Invoke(obj, new object[0]);
 
-                    string html = (string)typeof(GH_DocumentObject).GetRuntimeMethods().Where(m => m.Name.Contains("HtmlHelp_Source")).First().Invoke(obj, new object[0]);
-
+                    //OldUrl
                     if (html == null || html.Length == 0)
                     {
                         html = "We're sorry. Help is not yet available for this object";
                     }
 
-                    if (html.ToUpperInvariant().StartsWith("GOTO:"))
+                    if (html.StartsWith("GOTO:", StringComparison.OrdinalIgnoreCase))
                     {
                         _control.oldUrl.AllowNavigation = true;
                         _control.oldUrl.Navigate(html.Substring(5));
@@ -226,6 +233,7 @@ namespace SuperHelper
 
                     if (obj != null)
                     {
+                        //meWeb
                         if (UrlDict.TryGetValue(obj.ComponentGuid.ToString(), out string url))
                         {
                             _control.UrlTextBox.Text = url;
@@ -235,9 +243,9 @@ namespace SuperHelper
                                 _control.myWeb.Source = new Uri(url);
                             }
                         }
-                        else if (_htmlHelpInfo.Invoke(obj, new object[0]) is string s && s.StartsWith("GOTO:", StringComparison.OrdinalIgnoreCase))
+                        else if (html.StartsWith("GOTO:", StringComparison.OrdinalIgnoreCase))
                         {
-                            url = s.Substring(5);
+                            url = html.Substring(5);
                             _control.UrlTextBox.Text = url;
 
                             if (_control.myWeb.Source == null)
@@ -250,6 +258,7 @@ namespace SuperHelper
                             _control.UrlTextBox.Text = "";
                         }
 
+                        //Example
                         _control.SaveExampleValue(false);
                         if (UrlExDict.TryGetValue(obj.ComponentGuid.ToString(), out string[] urls))
                         {

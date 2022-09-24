@@ -185,18 +185,23 @@ namespace SuperHelper
     [ValueConversion(typeof(System.Drawing.Bitmap), typeof(ImageSource))]
     public class BitmapConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public static BitmapImage ToImage(System.Drawing.Bitmap bitmap)
         {
-            if (value == null) return null;
-
             MemoryStream ms = new MemoryStream();
-            ((System.Drawing.Bitmap)value).Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+            bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
             BitmapImage image = new BitmapImage();
             image.BeginInit();
             ms.Seek(0, SeekOrigin.Begin);
             image.StreamSource = ms;
             image.EndInit();
             return image;
+        }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return null;
+            if (!(value is System.Drawing.Bitmap bitmap)) return null;
+            return ToImage(bitmap);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -215,8 +220,14 @@ namespace SuperHelper
             if (!Directory.Exists(path)) return new string[0];
 
             //var file = Directory.GetFiles(path, "*.gh");
-            var all = Directory.GetDirectories(path).Union(Directory.GetFiles(path, "*.gh"));
-            return all;
+            try
+            {
+                return Directory.GetDirectories(path).Union(Directory.GetFiles(path, "*.gh"));
+            }
+            catch
+            {
+                return new string[0];
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -281,37 +292,34 @@ namespace SuperHelper
 
     public class IconImageConverter : IValueConverter
     {
+        private static ImageSource _folderSources = ToImage(@"C:\Users");
+
+        private static ImageSource ToImage(string path)
+        {
+            var icon = ExtractFromPath(path);
+            if (icon == null) return null;
+            var bitmap = icon.ToBitmap();
+
+            return BitmapConverter.ToImage(bitmap);
+        }
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return null;
             if (!(value is string path)) return null;
 
-            var icon = ExtractFromPath(path);
-            if (icon == null) return null;
-            var bitmap = icon.ToBitmap();
+            if(Directory.Exists(path)) return _folderSources;
+            //if (path.EndsWith(".gh")) return _ghSources;
 
-            IntPtr hBitmap = bitmap.GetHbitmap();
-
-            ImageSource wpfBitmap = Imaging.CreateBitmapSourceFromHBitmap(
-                hBitmap,
-                IntPtr.Zero,
-                Int32Rect.Empty,
-                BitmapSizeOptions.FromEmptyOptions());
-
-            if (!DeleteObject(hBitmap))
-            {
-                throw new Win32Exception();
-            }
-
-            return wpfBitmap;
+            return null;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
-        private static System.Drawing.Icon ExtractFromPath(string path)
+        internal static System.Drawing.Icon ExtractFromPath(string path)
         {
             SHFILEINFO shinfo = new SHFILEINFO();
             SHGetFileInfo(
@@ -342,5 +350,22 @@ namespace SuperHelper
 
         private const uint SHGFI_ICON = 0x100;
         private const uint SHGFI_LARGEICON = 0x0;
+    }
+
+    [ValueConversion(typeof(string), typeof(Visibility))]
+    public class StringVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return Visibility.Collapsed;
+            if (!(value is string str)) return Visibility.Collapsed;
+            if (string.IsNullOrEmpty(str)) return Visibility.Collapsed;
+            return Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
     }
 }

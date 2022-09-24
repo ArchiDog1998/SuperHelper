@@ -127,7 +127,8 @@ namespace SuperHelper
             private set
             {
                 if (_isValid == value) return;
-                MessageBox.Show("Failed to find document!");
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsValid)));
+                FileName = "Invalid";
                 _isValid = value;
             }
         }
@@ -160,16 +161,43 @@ namespace SuperHelper
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private Bitmap _bitmap;
+        private Bitmap _thumbnail;
         public Bitmap Thumbnail
         {
-            get => _bitmap;
+            get => _thumbnail;
             set
             {
-                if (_bitmap == value) return;
-                _bitmap = value;
+                if (_thumbnail == value) return;
+                _thumbnail = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Thumbnail)));
             }
+        }
+
+        private static Bitmap _ghIcon = InitIcon();
+        private Bitmap _icon = _ghIcon;
+        public Bitmap Icon
+        {
+            get => _icon;
+            set
+            {
+                if (_icon == value) return;
+                _icon = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Icon)));
+            }
+        }
+
+        private static Bitmap InitIcon()
+        {
+            var path = System.IO.Path.GetDirectoryName(Instances.DocumentEditor.GetType().Assembly.Location) + "\\Tutorials";
+            foreach (var p in Directory.GetFiles(path, "*.gh"))
+            {
+                var result = IconImageConverter.ExtractFromPath(p)?.ToBitmap();
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+            return null;
         }
 
         private string _description;
@@ -216,7 +244,11 @@ namespace SuperHelper
         public async Task PasteFromArchive(bool isHops)
         {
             var result = await CheckForDocument();
-            if (!result) return;
+            if (!result)
+            {
+                Instances.ActiveCanvas.Focus();
+                return;
+            }
 
             GH_Document document = _doc;
             string path = string.Empty;
@@ -224,6 +256,12 @@ namespace SuperHelper
             {
                 document = new GH_Document();
                 var hop = Instances.ComponentServer.EmitObject(HopsGuid);
+
+                if (hop == null)
+                {
+                    MessageBox.Show("Please install Hops!");
+                    return;
+                }
 
                 hop.CreateAttributes();
                 hop.Attributes.Pivot = default(PointF);
@@ -251,7 +289,11 @@ namespace SuperHelper
         public async Task CopyFromArchive()
         {
             var result = await CheckForDocument();
-            if (!result) return;
+            if (!result)
+            {
+                Instances.ActiveCanvas.Focus();
+                return;
+            }
 
             new GH_DocumentIO(_doc).Copy(GH_ClipboardType.System, false);
         }
@@ -290,7 +332,9 @@ namespace SuperHelper
             var bytes = await Task.Run(() => ReadFromUrlOrPath(Path));
 
             var archive = GetArchiveFromBytes(bytes);
+            if (archive == null) return null;
             var doc = GetDocumentFormArchive(archive);
+            if(doc == null) return null;
             UpdateTheProperyDoc(doc, archive);
             return doc;
         }
@@ -301,6 +345,7 @@ namespace SuperHelper
             var prop = doc.Properties;
             Description = prop.Description;
             FileName = prop.ProjectFileName.Split('.')[0];
+            Icon = prop.IconBitmap(new Size(24,24));
 
             var author = doc.Author.Name;
             if (!string.IsNullOrEmpty(author))
@@ -311,7 +356,7 @@ namespace SuperHelper
         {
             if (archive == null)
             {
-                throw new ArgumentNullException(nameof(archive));
+                return null;
             }
             GH_IReader gH_IReader = archive.GetRootNode.FindChunk("Thumbnail");
             if (gH_IReader == null)
@@ -324,30 +369,36 @@ namespace SuperHelper
                 bitmap = (Bitmap)bitmap.Clone();
             }
             return bitmap;
-            throw new ArgumentException(nameof(archive));
         }
 
         private static GH_Document GetDocumentFormArchive(GH_Archive archive)
         {
             if (archive == null)
             {
-                throw new ArgumentNullException(nameof(archive));
+                return null;
             }
             var document = new GH_Document();
             if (archive.ExtractObject(document, "Definition"))
             {
                 return document;
             }
-            throw new ArgumentException(nameof(archive));
+            return null;
         }
 
         private GH_Archive GetArchiveFromBytes(byte[] bytes)
         {
-            GH_Archive archive = new GH_Archive();
-            if (archive.Deserialize_Binary(bytes))
+            if(bytes == null || bytes.Length == 0)
             {
-                return archive;
+                IsValid = false;
+                return null;
             }
+
+            GH_Archive archive = new GH_Archive();
+                if (archive.Deserialize_Binary(bytes))
+                {
+                    return archive;
+                }
+
             IsValid = false;
             return null;
         }
@@ -381,7 +432,7 @@ namespace SuperHelper
         public void Dispose()
         {
             _documentTask?.Dispose();    
-            _bitmap?.Dispose();
+            _thumbnail?.Dispose();
         }
     }
 }

@@ -70,12 +70,16 @@ namespace SuperHelper
             set => Instances.Settings.SetValue(nameof(FileManageWorkDirectorey), value);
         }
 
-        private bool _autoTargetDefault = true;
-
         public bool AutoTarget
         {
-            get => Instances.Settings.GetValue(nameof(AutoTarget), _autoTargetDefault);
+            get => Instances.Settings.GetValue(nameof(AutoTarget), true);
             set => Instances.Settings.SetValue(nameof(AutoTarget), value);
+        }
+
+        public bool OpenDocumentWhenRightClick
+        {
+            get => Instances.Settings.GetValue(nameof(OpenDocumentWhenRightClick), false);
+            set => Instances.Settings.SetValue(nameof(OpenDocumentWhenRightClick), value);
         }
 
         private int _wireWidthDefault = 1;
@@ -290,7 +294,14 @@ namespace SuperHelper
                     await ex.PasteFromArchive(true);
                     break;
                 case MouseButton.Right:
-                    await ex.PasteFromArchive(false);
+                    if(OpenDocCheckBox.IsChecked ?? false)
+                    {
+                        Instances.DocumentEditor.ScriptAccess_OpenDocument(ex.Path);
+                    }
+                    else
+                    {
+                        await ex.PasteFromArchive(false);
+                    }
                     break;
             }
         }

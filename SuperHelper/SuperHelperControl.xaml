@@ -78,7 +78,7 @@
                         <Button DockPanel.Dock="Left" Content="Edit" Click="SwitchButton_Click"  x:Name="ExampleEditButton"
                             Template="{StaticResource CornerButtonTemplate}" Margin="5"/>
 
-                        <Slider x:Name="ExampleHeightSlider" Minimum="20" Maximum="150" Value="60" VerticalAlignment="Center"
+                        <Slider x:Name="ExampleHeightSlider" Minimum="20" Maximum="150" Value="55" VerticalAlignment="Center"
                                 ToolTip="Example item's height." Margin="5 0"/>
                     </DockPanel>
 
@@ -159,8 +159,13 @@
                              Padding="5" BorderThickness="0"/>
                     </DockPanel>
 
-                    <Slider DockPanel.Dock="Bottom" x:Name="FileHeightSlider" Minimum="20" Maximum="150" Value="60" VerticalAlignment="Center" Margin="5 0"
+                    <DockPanel DockPanel.Dock="Bottom">
+                        <CheckBox x:Name="OpenDocCheckBox" DockPanel.Dock="Left" VerticalContentAlignment="Center" IsChecked="{Binding ElementName=Father, Path=OpenDocumentWhenRightClick, Mode=TwoWay}" Content="Open Doc" ToolTip="Open document when right click the item" Margin="2 0"/>
+                        <Slider x:Name="FileHeightSlider" Minimum="20" Maximum="150" Value="55" VerticalAlignment="Center" Margin="5 0"
                                 ToolTip="File item's height."/>
+                    </DockPanel>
+
+
                     <Border Style="{StaticResource ContentBorder}">
                         
                         <local:StretchingTreeView ItemsSource="{Binding ElementName=inputDir, Path=Text, Converter={StaticResource SubItemConverter}, Mode=OneWay, UpdateSourceTrigger=Explicit}"

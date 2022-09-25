@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.IO;
-using Eto.Forms;
 using System.Windows.Controls;
 using Grasshopper.GUI.Canvas.Interaction;
 using Grasshopper.GUI.Canvas;
@@ -19,6 +18,7 @@ using Grasshopper;
 using System.Windows.Shapes;
 using System.ComponentModel;
 using Grasshopper.Kernel.Data;
+using System.Windows.Forms;
 
 namespace SuperHelper
 {
@@ -33,6 +33,9 @@ namespace SuperHelper
             private GH_Document _doc;
             private static PropertyInfo _remoteDefinitionLocationInfo;
             private string _path;
+
+            private GH_PanInteraction _panInteraction;
+            private Point _panControlLocation;
 
             internal GH_CopyInteraction(GH_Canvas canvas, GH_Document doc, GH_CanvasMouseEvent mouseEvent, string path)
                 : base(canvas, mouseEvent)
@@ -64,9 +67,27 @@ namespace SuperHelper
                 Grasshopper.Instances.ActiveCanvas.ActiveInteraction = this;
             }
 
+            public override GH_ObjectResponse RespondToMouseDown(GH_Canvas sender, GH_CanvasMouseEvent e)
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    _panInteraction = new GH_PanInteraction(sender, e);
+                    _panControlLocation = e.ControlLocation;
+
+                }
+                return base.RespondToMouseDown(sender, e);
+            }
+
+            public override GH_ObjectResponse RespondToMouseMove(GH_Canvas sender, GH_CanvasMouseEvent e)
+            {
+                _panInteraction?.RespondToMouseMove(sender, e);
+                return base.RespondToMouseMove(sender, e);
+            }
+
             public override GH_ObjectResponse RespondToMouseUp(GH_Canvas sender, GH_CanvasMouseEvent e)
             {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+
+                if (e.Button == MouseButtons.Left)
                 {
                     float width = e.CanvasX - m_canvas_mousedown.X;
                     float height = e.CanvasY - m_canvas_mousedown.Y;
@@ -113,10 +134,25 @@ namespace SuperHelper
                         _remoteDefinitionLocationInfo.SetValue(hop, _path);
                     }
                 }
+                else
+                {
+                    if (_panInteraction != null && DistanceTo(e.ControlLocation, _panControlLocation) < 10)
+                    {
+                        Instances.ActiveCanvas.ActiveInteraction = null;
+                    }
+
+                    _panInteraction = null;
+                    return GH_ObjectResponse.Ignore;
+                }
 
                 sender.Document.NewSolution(expireAllObjects: false);
 
                 return GH_ObjectResponse.Release;
+            }
+
+            internal static float DistanceTo(PointF a, PointF b)
+            {
+                return (float)Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
             }
         }
 
@@ -181,6 +217,7 @@ namespace SuperHelper
             set
             {
                 if (_icon == value) return;
+                if (value == null) return;
                 _icon = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Icon)));
             }

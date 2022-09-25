@@ -83,7 +83,15 @@ namespace SuperHelper
                     }
                     catch
                     {
+                        try
+                        {
+                            var bytes = client.DownloadData(@"https://gitee.com/ArchiTed1998/SuperHelper/raw/master/urls.json");
+                            UrlDict = ser.Deserialize<Dictionary<string, string>>(Encoding.Default.GetString(bytes));
+                        }
+                        catch
+                        {
 
+                        }
                     }
 
                     try
@@ -93,7 +101,15 @@ namespace SuperHelper
                     }
                     catch
                     {
+                        try
+                        {
+                            var bytes = client.DownloadData(@"https://gitee.com/ArchiTed1998/SuperHelper/raw/master/urlex.json");
+                            UrlExDict = ser.Deserialize<Dictionary<string, string[]>>(Encoding.Default.GetString(bytes));
+                        }
+                        catch
+                        {
 
+                        }
                     }
                 }
 

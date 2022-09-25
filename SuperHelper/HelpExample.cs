@@ -21,6 +21,7 @@ using Grasshopper.Kernel.Data;
 using System.Windows.Forms;
 using System.Runtime;
 using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
 
 namespace SuperHelper
 {
@@ -175,9 +176,16 @@ namespace SuperHelper
             private set
             {
                 if (_isValid == value) return;
+
+                if (!value && Path.StartsWith(@"https://github.com/ArchiDog1998"))
+                {
+                    Path = Path.Replace(@"https://github.com/ArchiDog1998", @"https://gitee.com/ArchiTed1998");
+                    return;
+                }
+
+                _isValid = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsValid)));
                 FileName = "Invalid";
-                _isValid = value;
             }
         }
 

@@ -9,13 +9,13 @@
             x:Name="Father"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    
+
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Dictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            
+
             <local:ObjectNameConverter x:Key="ObjectNameConverter"/>
             <local:TypeInfoConverter x:Key="TypeInfoConverter"/>
             <local:TypeLoactionConverter x:Key="TypeLoactionConverter"/>
@@ -32,7 +32,7 @@
              Color="LightSkyBlue"/>
         </ResourceDictionary>
     </UserControl.Resources>
-    
+
     <Grid x:Name="MotherGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -57,14 +57,15 @@
                     <Grid DockPanel.Dock="Top">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="365*"/>
+                            <ColumnDefinition Width="251*"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Content="Default Url: "/>
-                        <TextBox Grid.Column="1" x:Name="UrlTextBox"/>
-                        <Button Grid.Column="2" Content="Save" Click="SaveClick" Margin="3 0 0 0" Template="{StaticResource CornerButtonTemplate}"/>
-                        <Button Grid.Column="3" Content="Go" Click="GoClick" Margin="3 0 0 0" Template="{StaticResource CornerButtonTemplate}"/>
+                        <Label Grid.Column="0" Content="Default Url: " Grid.ColumnSpan="2" Margin="0,0,364,0"/>
+                        <TextBox Grid.Column="1" x:Name="UrlTextBox" Grid.ColumnSpan="2"/>
+                        <Button Grid.Column="3" Content="Save" Click="SaveClick" Margin="3,0,0,0" Template="{StaticResource CornerButtonTemplate}"/>
+                        <Button Grid.Column="4" Content="Go" Click="GoClick" Margin="3,0,0,0" Template="{StaticResource CornerButtonTemplate}"/>
                     </Grid>
 
                     <WebBrowser Grid.Row="1" Grid.Column="0"  Grid.ColumnSpan="3" x:Name="myWeb" Navigated="myWeb_Navigated"/>
@@ -146,7 +147,7 @@
                         Click="OpenFileClick" ToolTip="Click to open File" HorizontalAlignment="Center"/>
                 </StackPanel>
             </TabItem>
-            
+
             <TabItem Header="File Manager">
                 <DockPanel>
                     <DockPanel  DockPanel.Dock="Top" Margin="8 0">
@@ -167,7 +168,7 @@
 
 
                     <Border Style="{StaticResource ContentBorder}">
-                        
+
                         <local:StretchingTreeView ItemsSource="{Binding ElementName=inputDir, Path=Text, Converter={StaticResource SubItemConverter}, Mode=OneWay, UpdateSourceTrigger=Explicit}"
                                                   x:Name="DirectoryTree" Background="Transparent" BorderThickness="0"
                                                   ToolTip="Left click to add hops, right click to add document.">
@@ -229,7 +230,7 @@
                         </local:StretchingTreeView>
                     </Border>
                 </DockPanel>
-                
+
             </TabItem>
 
             <TabItem Header="Settings">

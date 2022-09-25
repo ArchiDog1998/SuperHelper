@@ -311,6 +311,7 @@ namespace SuperHelper
             if (!(sender is TreeViewItem item)) return;
             if (!(item.DataContext is string path)) return;
 
+            item.IsExpanded = false;
             item.ItemsSource = File.Exists(path) ? new string[0] : new string[] { string.Empty };
         }
 

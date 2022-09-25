@@ -16,6 +16,25 @@
 
         </ResourceDictionary>
     </UserControl.Resources>
+    <UserControl.ToolTip>
+        <DockPanel>
+            <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Center"  Orientation="Horizontal">
+                <Image Width="20" Height="20" DockPanel.Dock="Left" Source="{Binding Icon, Converter={StaticResource BitmapConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock FontWeight="Bold" FontSize="20" Margin="5 0 0 0"
+                                               Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow"/>
+                <TextBlock FontWeight="Bold" FontSize="16" VerticalAlignment="Bottom"
+                                               Text="{Binding Author, UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow"/>
+            </StackPanel>
+
+            <Image DockPanel.Dock="Bottom" Source="{Binding Picture, Converter={StaticResource BitmapConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+
+
+            <TextBlock Margin="10" HorizontalAlignment="Center" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                    Visibility="{Binding Description, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource StringVisibilityConverter}}"
+                   TextWrapping="WrapWithOverflow"/>
+        </DockPanel>
+    </UserControl.ToolTip>
     <DockPanel>
         <Image DockPanel.Dock="Left" Source="{Binding Thumbnail, Converter={StaticResource BitmapConverter}, UpdateSourceTrigger=PropertyChanged}"/>
 

@@ -19,6 +19,8 @@ using System.Windows.Shapes;
 using System.ComponentModel;
 using Grasshopper.Kernel.Data;
 using System.Windows.Forms;
+using System.Runtime;
+using System.Drawing.Imaging;
 
 namespace SuperHelper
 {
@@ -150,6 +152,16 @@ namespace SuperHelper
                 return GH_ObjectResponse.Release;
             }
 
+            public override GH_ObjectResponse RespondToKeyDown(GH_Canvas sender, KeyEventArgs e)
+            {
+                Keys keyCode = e.KeyCode;
+                if (keyCode == Keys.Menu || keyCode == Keys.Alt)
+                {
+                    return GH_ObjectResponse.Ignore;
+                }
+                return base.RespondToKeyDown(sender, e);
+            }
+
             internal static float DistanceTo(PointF a, PointF b)
             {
                 return (float)Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
@@ -237,6 +249,19 @@ namespace SuperHelper
             return null;
         }
 
+        private Bitmap _picture;
+        public Bitmap Picture
+        {
+            get => _picture;
+            set
+            {
+                if (_picture == value) return;
+                if (value == null) return;
+                _picture = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Picture)));
+            }
+        }
+
         private string _description;
 
         public string Description
@@ -275,7 +300,6 @@ namespace SuperHelper
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Author)));
             }
         }
-
 
         #region Paste
         public async Task PasteFromArchive(bool isHops)
@@ -376,17 +400,52 @@ namespace SuperHelper
             return doc;
         }
 
+        static MethodInfo[] _iconBitmap = typeof(GH_DocumentProperties).GetRuntimeMethods().Where(f => f.Name.Contains("IconBitmap")).ToArray();
         private void UpdateTheProperyDoc(GH_Document doc, GH_Archive archive)
         {
             Thumbnail = GetBitmapFormArchive(archive);
             var prop = doc.Properties;
             Description = prop.Description;
             FileName = prop.ProjectFileName.Split('.')[0];
-            Icon = prop.IconBitmap(new Size(24,24));
+            if(_iconBitmap != null && _iconBitmap.Length > 0)
+            {
+                Icon = (Bitmap) _iconBitmap[0]?.Invoke(prop, new object[] { new Size(24, 24) });
+            }
+            //Picture = CreatePicture(doc);
 
             var author = doc.Author.Name;
             if (!string.IsNullOrEmpty(author))
                 Author = " - " + author;
+        }
+
+        private static Bitmap CreatePicture(GH_Document doc)
+        {
+            const float zoom = 1;
+
+            var canvas = new GH_Canvas();
+            canvas.Document = doc;
+
+            var rec = canvas.Document.BoundingBox();
+            rec.X *= zoom;
+            rec.Y *= zoom;
+            rec.Width *= zoom;
+            rec.Height *= zoom;
+            var rectangle = GH_Convert.ToRectangle(rec);
+            rectangle.Inflate(100, 100);
+
+            GH_Viewport gH_Viewport = new GH_Viewport(canvas.Viewport);
+            gH_Viewport.Width = rectangle.Width;
+            gH_Viewport.Height = rectangle.Height;
+            gH_Viewport.Zoom = zoom;
+            gH_Viewport.Tx = -rectangle.X;
+            gH_Viewport.Ty = -rectangle.Y;
+            gH_Viewport.ComputeProjection();
+           
+            var bitmap = canvas.GenerateHiResImageTile(gH_Viewport, Color.Transparent);
+
+            canvas.Dispose();
+
+            return bitmap;
         }
 
         private static Bitmap GetBitmapFormArchive(GH_Archive archive)

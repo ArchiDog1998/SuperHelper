@@ -86,12 +86,12 @@
                     <local:InstanceDescControl DockPanel.Dock="Top" DataContext="{Binding Mode=OneWay}"/>
                     <Border Style="{StaticResource ContentBorder}">
                         <Grid>
-                            <ListView BorderThickness="0" x:Name="ExampleList" Background="Transparent">
+                            <ListView BorderThickness="0" x:Name="ExampleList" Background="Transparent"
+                                      ToolTip="Left click to drag to add, right click to copy.">
                                 <ListView.ItemContainerStyle>
                                     <Style TargetType="ListBoxItem">
                                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                         <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                                        <Setter Property="ToolTip" Value="Left click to drag to add, right click to copy"/>
                                         <EventSetter Event="MouseUp" Handler="ListBoxItem_MouseUp"/>
                                     </Style>
                                 </ListView.ItemContainerStyle>
@@ -169,7 +169,8 @@
                     <Border Style="{StaticResource ContentBorder}">
                         
                         <local:StretchingTreeView ItemsSource="{Binding ElementName=inputDir, Path=Text, Converter={StaticResource SubItemConverter}, Mode=OneWay, UpdateSourceTrigger=Explicit}"
-                                                  x:Name="DirectoryTree" Background="Transparent" BorderThickness="0">
+                                                  x:Name="DirectoryTree" Background="Transparent" BorderThickness="0"
+                                                  ToolTip="Left click to add hops, right click to add document.">
                             <TreeView.ItemContainerStyle>
                                 <Style TargetType="TreeViewItem">
 
@@ -205,7 +206,6 @@
                                                         <Setter Property="Content">
                                                             <Setter.Value>
                                                                 <local:HelpExampleControl DataContext="{Binding Converter={StaticResource CreateHelpExampleConverter}}"
-                                                                                          ToolTip="Left click to add hops, right click to add document."
                                                                                           MaxHeight="{Binding ElementName=FileHeightSlider, Path=Value}"/>
                                                             </Setter.Value>
                                                         </Setter>

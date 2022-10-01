@@ -498,10 +498,18 @@ namespace SuperHelper
             }
 
             GH_Archive archive = new GH_Archive();
+            try
+            {
                 if (archive.Deserialize_Binary(bytes))
                 {
                     return archive;
                 }
+            }
+            catch
+            {
+
+            }
+
 
             IsValid = false;
             return null;

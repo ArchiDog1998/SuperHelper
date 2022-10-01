@@ -11,6 +11,9 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.IO;
+using System.Web.Script.Serialization;
 
 namespace SuperHelper
 {
@@ -165,6 +168,10 @@ namespace SuperHelper
             {
                 _splitter.MaxSize = editor.Controls[0].Width - 80;
             };
+
+#if DEBUG
+            SaveExamplesToJson();
+#endif
         }
 
         private void RhinoDoc_EndOpenDocument(object sender, Rhino.DocumentOpenEventArgs e)
@@ -180,5 +187,131 @@ namespace SuperHelper
 
             });
         }
+
+#if DEBUG
+        const string EXAMPLE_FILE = @"D:\OneDrive - stu.zafu.edu.cn\Rhino Share Files\07 Grasshopper Developments 蚱蜢开发\项目案例\SuperHelper\Examples";
+        const string URL_EXAMPLE = @"https://github.com/ArchiDog1998/SuperHelper/raw/master/Examples";
+        const string LocationEX = @"D:\OneDrive - stu.zafu.edu.cn\Rhino Share Files\07 Grasshopper Developments 蚱蜢开发\项目案例\SuperHelper.urlex.json";
+        private void SaveExamplesToJson()
+        {
+
+            #region Get Objects' Dictionary
+            Dictionary<string, Dictionary<string, Dictionary<string, Guid>>> allObjects =
+                new Dictionary<string, Dictionary<string, Dictionary<string, Guid>>>();
+
+            foreach (var item in Grasshopper.Instances.ComponentServer.ObjectProxies)
+            {
+                if(item.Obsolete) continue;
+                if (item.Kind != GH_ObjectType.CompiledObject) continue;
+                //if ((item.Exposure & GH_Exposure.hidden) == GH_Exposure.hidden) continue;
+
+                if (!item.Desc.HasCategory) continue;
+
+                if(!allObjects.TryGetValue(item.Desc.Category, out var subCateDict))
+                    subCateDict = new Dictionary<string, Dictionary<string, Guid>>();
+
+                if (!item.Desc.HasSubCategory) continue;
+
+                if (!subCateDict.TryGetValue(item.Desc.SubCategory, out var nameDict))
+                    nameDict = new Dictionary<string, Guid>();
+
+                nameDict[item.Desc.Name] = item.Guid;
+
+                subCateDict[item.Desc.SubCategory] = nameDict;
+                allObjects[item.Desc.Category] = subCateDict;
+            }
+            #endregion
+
+            if (!Directory.Exists(EXAMPLE_FILE)) return;
+
+            #region Create Folder
+            //foreach (var category in allObjects.Keys)
+            //{
+            //    string categoryPath = string.Join("\\", EXAMPLE_FILE, category);
+            //    if (!Directory.Exists(categoryPath))
+            //    {
+            //        Directory.CreateDirectory(categoryPath);
+            //    }
+
+            //    foreach (var subCategory in allObjects[category].Keys)
+            //    {
+            //        string subCategoryPath = string.Join("\\", categoryPath, ObjectNameToDirectory(subCategory));
+            //        if (!Directory.Exists(subCategoryPath))
+            //        {
+            //            Directory.CreateDirectory(subCategoryPath);
+            //        }
+
+            //        foreach (var objectName in allObjects[category][subCategory].Keys)
+            //        {
+            //            string objectPath = string.Join("\\", subCategoryPath, ObjectNameToDirectory(objectName));
+            //            if (!Directory.Exists(objectPath))
+            //            {
+            //                try
+            //                {
+            //                    Directory.CreateDirectory(objectPath);
+            //                }
+            //                catch
+            //                {
+
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+            #endregion
+
+            //Set directory's files to json.
+            foreach (var categroy in Directory.GetDirectories(EXAMPLE_FILE))
+            {
+                var Cate = categroy.Split('\\').Last();
+
+                if (!allObjects.TryGetValue(Cate, out var subCateDict))
+                    continue;
+
+                foreach (var subCategory in Directory.GetDirectories(categroy))
+                {
+                    var Sub = DirectoryToObjectName(subCategory.Split('\\').Last());
+
+                    if (!subCateDict.TryGetValue(Sub, out var nameDict))
+                        continue;
+
+
+                    foreach (var name in Directory.GetDirectories(subCategory))
+                    {
+                        var Name = DirectoryToObjectName(name.Split('\\').Last());
+                        if (!nameDict.TryGetValue(Name, out var guid))
+                            continue;
+
+                        if(!MenuReplacer.UrlExDict.TryGetValue(guid.ToString(), out var urls))
+                            urls = new string[0];
+
+                        HashSet<string> urlsList = new HashSet<string>(urls);
+                        foreach (var file in Directory.GetFiles(name, "*.gh"))
+                        {
+                            var fileName = file.Split('\\').Last();
+
+                            urlsList.Add(string.Join("/", URL_EXAMPLE, Cate, Sub, Name, fileName));
+                        }
+
+                        MenuReplacer.UrlExDict[guid.ToString()] = urlsList.ToArray();
+                        JavaScriptSerializer ser = new JavaScriptSerializer();
+                        File.WriteAllText(LocationEX, ser.Serialize(MenuReplacer.UrlExDict));
+                    }
+                }
+            }
+
+            MenuReplacer.SaveUrlExToJson();
+        }
+
+        private string ObjectNameToDirectory(string str)
+        {
+            return str.Replace("|", " _X_ ");
+        }
+
+        private string DirectoryToObjectName(string str)
+        {
+            return str.Replace(" _X_ ", "|");
+        }
+#endif
     }
 }

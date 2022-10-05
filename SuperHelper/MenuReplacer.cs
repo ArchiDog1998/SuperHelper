@@ -30,6 +30,12 @@ namespace SuperHelper
 
         internal static SuperHelperControl _control = new SuperHelperControl();
 
+        public static DateTime LastDownloadURLTime
+        {
+            get => Instances.Settings.GetValue(nameof(LastDownloadURLTime), DateTime.MinValue);
+            set => Instances.Settings.SetValue(nameof(LastDownloadURLTime), value);
+        }
+
         [DllImport("kernel32.dll", ExactSpelling = true, CallingConvention = CallingConvention.StdCall, SetLastError = true)]
         private static extern int GetUserGeoID(int geoClass);
         [DllImport("kernel32.dll")]
@@ -73,9 +79,11 @@ namespace SuperHelper
             //Read from json.
             try
             {
+                var now = DateTime.Now;
                 //Download for first.
-                if(GetMachineCurrentLocation() == "CHN")
+                if (GetMachineCurrentLocation() == "CHN" && now - LastDownloadURLTime > new TimeSpan(7, 0, 0, 0))
                 {
+                    LastDownloadURLTime = now;
                     try
                     {
                         var bytes = client.DownloadData(@"https://raw.githubusercontent.com/ArchiDog1998/SuperHelper/master/urls.json");
@@ -151,6 +159,7 @@ namespace SuperHelper
             }
 
             Instances.ActiveCanvas.DocumentObjectMouseDown += ActiveCanvas_DocumentObjectMouseDown;
+            Instances.ActiveCanvas.DocumentChanged += ActiveCanvas_DocumentChanged;
 
             return ExchangeMethod(
                 typeof(GH_DocumentObject).GetRuntimeMethods().Where(m => m.Name.Contains("Menu_ObjectHelpClick")).First(),
@@ -158,6 +167,28 @@ namespace SuperHelper
                 );
         }
 
+        private static void ActiveCanvas_DocumentChanged(Grasshopper.GUI.Canvas.GH_Canvas sender, Grasshopper.GUI.Canvas.GH_CanvasDocumentChangedEventArgs e)
+        {
+            if(e.OldDocument != null)
+            {
+                e.OldDocument.SolutionEnd -= DocumentSolutionEnd;
+            }
+            if (e.NewDocument != null)
+            {
+                e.NewDocument.SolutionEnd -= DocumentSolutionEnd;
+                e.NewDocument.SolutionEnd += DocumentSolutionEnd;
+            }
+        }
+
+        private static void DocumentSolutionEnd(object sender, GH_SolutionEventArgs e)
+        {
+            if (_control.MajorControl.SelectedIndex != 3) return;
+            var data = _control.DataContext;
+            if (data == null) return;
+
+            _control.DataContext = null;
+            _control.DataContext = data;
+        }
 
         private static bool ExchangeMethod(MethodInfo targetMethod, MethodInfo injectMethod)
         {
@@ -207,23 +238,29 @@ namespace SuperHelper
 
                 _control.Dispatcher.Invoke(() =>
                 {
-                    bool shouldSwitch = true;
+                    bool shouldSwitchURL = true;
                     if(_control.DataContext is GH_DocumentObject docObj)
                     {
-                        if (docObj.ComponentGuid == obj.ComponentGuid) shouldSwitch = false;
+                        if (docObj.ComponentGuid == obj.ComponentGuid) shouldSwitchURL = false;
                     }
 
-                    _control.DataContext = null;
+                    //Change selected tabItem.
+                    if((_control.MajorControl.SelectedIndex == 5 && _control.DataContext == null) || _control.MajorControl.SelectedIndex == 6)
+                    {
+                        _control.MajorControl.SelectedIndex = 3;
+                    }
 
                     try
                     {
+                        _control.DataContext = null;
                         _control.DataContext = obj;
                     }
                     catch
                     {
 
                     }
-                    if (!shouldSwitch) return;
+
+                    if (!shouldSwitchURL) return;
 
                     string html = (string)_htmlHelpInfo.Invoke(obj, new object[0]);
 

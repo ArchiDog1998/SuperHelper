@@ -191,7 +191,7 @@ namespace SuperHelper
 #if DEBUG
         const string EXAMPLE_FILE = @"D:\OneDrive - stu.zafu.edu.cn\Rhino Share Files\07 Grasshopper Developments 蚱蜢开发\项目案例\SuperHelper\Examples";
         const string URL_EXAMPLE = @"https://github.com/ArchiDog1998/SuperHelper/raw/master/Examples";
-        const string LocationEX = @"D:\OneDrive - stu.zafu.edu.cn\Rhino Share Files\07 Grasshopper Developments 蚱蜢开发\项目案例\SuperHelper.urlex.json";
+        const string LocationEX = @"D:\OneDrive - stu.zafu.edu.cn\Rhino Share Files\07 Grasshopper Developments 蚱蜢开发\项目案例\SuperHelper\urlex.json";
         private void SaveExamplesToJson()
         {
 
@@ -293,14 +293,15 @@ namespace SuperHelper
                             urlsList.Add(string.Join("/", URL_EXAMPLE, Cate, Sub, Name, fileName));
                         }
 
-                        MenuReplacer.UrlExDict[guid.ToString()] = urlsList.ToArray();
-                        JavaScriptSerializer ser = new JavaScriptSerializer();
-                        File.WriteAllText(LocationEX, ser.Serialize(MenuReplacer.UrlExDict));
+                        if (urlsList.Count > 0)
+                            MenuReplacer.UrlExDict[guid.ToString()] = urlsList.ToArray();  
                     }
                 }
             }
 
             MenuReplacer.SaveUrlExToJson();
+            JavaScriptSerializer ser = new JavaScriptSerializer();
+            File.WriteAllText(LocationEX, ser.Serialize(MenuReplacer.UrlExDict));
         }
 
         private string ObjectNameToDirectory(string str)

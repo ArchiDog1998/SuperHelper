@@ -83,8 +83,6 @@ namespace SuperHelper
             Button button = sender as Button;
             if (button == null) return;
 
-            IGH_Goo goo = (IGH_Goo)button.DataContext;
-
             HighLightConduit.HighLightObject = null;
             foreach (var view in Rhino.RhinoDoc.ActiveDoc.Views)
             {
@@ -100,7 +98,7 @@ namespace SuperHelper
             IGH_Goo goo = (IGH_Goo)button.DataContext;
             if (goo is IGH_PreviewData)
             {
-                HighLightConduit.HighLightObject = (IGH_PreviewData)goo;
+                HighLightConduit.HighLightObject = new IGH_PreviewData[] { (IGH_PreviewData)goo };
                 foreach (var view in Rhino.RhinoDoc.ActiveDoc.Views)
                 {
                     view.Redraw();

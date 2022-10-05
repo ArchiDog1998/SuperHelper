@@ -43,20 +43,20 @@
                       VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"
                   ItemsSource="{Binding Converter={StaticResource ResourceKey=StructureDataConverter}, Mode=OneWay}">
 
-                <TreeView.ItemTemplate>
-                    <HierarchicalDataTemplate ItemsSource="{Binding ListItems}">
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding ListItems}">
 
-                        <DockPanel Width="{Binding ActualWidth, ElementName=treeView, Mode=OneWay, Converter={StaticResource MinusFortyFiveConverter}}"
-                                   MinWidth="100" Margin="0 3 0 3">
-                            <TextBlock Text="{Binding Path=Path, Mode=OneWay}"
+                    <DockPanel Width="{Binding ActualWidth, ElementName=treeView, Mode=OneWay, Converter={StaticResource MinusFortyFiveConverter}}"
+                                   MinWidth="100" Margin="0 3 0 3" MouseLeave="DockPanel_MouseLeave" MouseMove="DockPanel_MouseMove">
+                        <TextBlock Text="{Binding Path=Path, Mode=OneWay}"
                                        DockPanel.Dock="Left"/>
-                            <TextBlock Text="{Binding Converter={StaticResource ResourceKey=PathCountConverter}, Mode=OneWay}"
+                        <TextBlock Text="{Binding Converter={StaticResource ResourceKey=PathCountConverter}, Mode=OneWay}"
                                        DockPanel.Dock="Right" HorizontalAlignment="Right" Foreground="DimGray"/>
-                        </DockPanel>
+                    </DockPanel>
 
 
-                        <HierarchicalDataTemplate.ItemTemplate>
-                            <DataTemplate>
+                    <HierarchicalDataTemplate.ItemTemplate>
+                        <DataTemplate>
                             <StackPanel Orientation="Horizontal" MinWidth="80" ToolTip="{Binding Converter={StaticResource ResourceKey=IndexGooDescConverter}, Mode=OneWay}">
                                 <TextBlock Text="{Binding Path=Index, Mode=OneWay}"
                                                VerticalAlignment="Center" Foreground="DimGray"/>
@@ -64,9 +64,9 @@
                                 <local:GHGooControl DataContext="{Binding Path=Data, Mode=OneWay}" HorizontalAlignment="Stretch"/>
                             </StackPanel>
                         </DataTemplate>
-                        </HierarchicalDataTemplate.ItemTemplate>
-                    </HierarchicalDataTemplate>
-                </TreeView.ItemTemplate>
-            </TreeView>
+                    </HierarchicalDataTemplate.ItemTemplate>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
         </StackPanel>
 </UserControl>

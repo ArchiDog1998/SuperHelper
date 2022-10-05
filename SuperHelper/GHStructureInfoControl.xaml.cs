@@ -42,6 +42,31 @@ namespace SuperHelper
 
             e.Handled = true;
         }
+
+        private void DockPanel_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (!(sender is DockPanel panel)) return;
+
+            HighLightConduit.HighLightObject = null;
+            foreach (var view in Rhino.RhinoDoc.ActiveDoc.Views)
+            {
+                view.Redraw();
+            }
+        }
+
+        private void DockPanel_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!(sender is DockPanel panel)) return;
+
+            if (!(panel.DataContext is StructureList list)) return;
+
+            HighLightConduit.HighLightObject = list.ListItems.Select(i => i.Data).Where(i => i is IGH_PreviewData).Cast<IGH_PreviewData>().ToArray();
+
+            foreach (var view in Rhino.RhinoDoc.ActiveDoc.Views)
+            {
+                view.Redraw();
+            }
+        }
     }
 
     public struct StructureList

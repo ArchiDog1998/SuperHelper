@@ -268,6 +268,7 @@ namespace SuperHelper
                     break;
                 case MouseButton.Right:
                     await ex.CopyFromArchive();
+
                     break;
             }
         }

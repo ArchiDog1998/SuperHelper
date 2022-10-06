@@ -36,23 +36,23 @@ namespace SuperHelper
             set => Instances.Settings.SetValue(nameof(LastDownloadURLTime), value);
         }
 
-        [DllImport("kernel32.dll", ExactSpelling = true, CallingConvention = CallingConvention.StdCall, SetLastError = true)]
-        private static extern int GetUserGeoID(int geoClass);
-        [DllImport("kernel32.dll")]
-        private static extern int GetUserDefaultLCID();
+        //[DllImport("kernel32.dll", ExactSpelling = true, CallingConvention = CallingConvention.StdCall, SetLastError = true)]
+        //private static extern int GetUserGeoID(int geoClass);
+        //[DllImport("kernel32.dll")]
+        //private static extern int GetUserDefaultLCID();
 
-        [DllImport("kernel32.dll")]
-        private static extern int GetGeoInfo(int geoid, int geoType, StringBuilder lpGeoData, int cchData, int langid);
+        //[DllImport("kernel32.dll")]
+        //private static extern int GetGeoInfo(int geoid, int geoType, StringBuilder lpGeoData, int cchData, int langid);
 
-        public static string GetMachineCurrentLocation()
-        {
-            int geoId = GetUserGeoID(16);
-            int lcid = GetUserDefaultLCID();
-            StringBuilder locationBuffer = new StringBuilder(100);
-            GetGeoInfo(geoId, 5, locationBuffer, locationBuffer.Capacity, lcid);
+        //public static string GetMachineCurrentLocation()
+        //{
+        //    int geoId = GetUserGeoID(16);
+        //    int lcid = GetUserDefaultLCID();
+        //    StringBuilder locationBuffer = new StringBuilder(100);
+        //    GetGeoInfo(geoId, 5, locationBuffer, locationBuffer.Capacity, lcid);
 
-            return locationBuffer.ToString().Trim();
-        }
+        //    return locationBuffer.ToString().Trim();
+        //}
 
         protected MenuReplacer(IGH_InstanceDescription tag) : base(tag)
         {
@@ -80,8 +80,12 @@ namespace SuperHelper
             try
             {
                 var now = DateTime.Now;
+                var time = 7;
+#if DEBUG
+                time = 0;
+#endif
                 //Download for first.
-                if (GetMachineCurrentLocation() == "CHN" && now - LastDownloadURLTime > new TimeSpan(7, 0, 0, 0))
+                if (now - LastDownloadURLTime > new TimeSpan(time, 0, 0, 0))
                 {
                     LastDownloadURLTime = now;
                     try

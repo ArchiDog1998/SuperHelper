@@ -35,7 +35,7 @@ namespace SuperHelper
         //Return a string representing your preferred contact details.
         public override string AuthorContact => "1123993881@qq.com";
 
-        public override string Version => "1.1.5";
+        public override string Version => "1.1.6";
     }
 
     public class SuperHelperAssemblyPriority : GH_AssemblyPriority
@@ -260,29 +260,38 @@ namespace SuperHelper
             //}
             #endregion
 
+
+            string logs = string.Empty;
             //Set directory's files to json.
             foreach (var categroy in Directory.GetDirectories(EXAMPLE_FILE))
             {
                 var Cate = categroy.Split('\\').Last();
 
                 if (!allObjects.TryGetValue(Cate, out var subCateDict))
+                {
+                    logs += $"Category {Cate} not found!\n";
                     continue;
+                }
 
                 foreach (var subCategory in Directory.GetDirectories(categroy))
                 {
                     var Sub = DirectoryToObjectName(subCategory.Split('\\').Last());
 
                     if (!subCateDict.TryGetValue(Sub, out var nameDict))
+                    {
+                        logs += $"Subcategory {Sub} in {Cate} not found!\n";
                         continue;
-
-
+                    }
                     foreach (var name in Directory.GetDirectories(subCategory))
                     {
                         var Name = DirectoryToObjectName(name.Split('\\').Last());
                         if (!nameDict.TryGetValue(Name, out var guid))
+                        {
+                            logs += $"Name {Name} in {Cate} | {Sub} not found!\n";
                             continue;
+                        }
 
-                        if(!MenuReplacer.UrlExDict.TryGetValue(guid.ToString(), out var urls))
+                        if (!MenuReplacer.UrlExDict.TryGetValue(guid.ToString(), out var urls))
                             urls = new string[0];
 
                         HashSet<string> urlsList = new HashSet<string>(urls);
@@ -299,6 +308,11 @@ namespace SuperHelper
                 }
             }
 
+            if (!string.IsNullOrEmpty(logs))
+            {
+                MessageBox.Show(logs);
+            }
+
             MenuReplacer.SaveUrlExToJson();
             JavaScriptSerializer ser = new JavaScriptSerializer();
             File.WriteAllText(LocationEX, ser.Serialize(MenuReplacer.UrlExDict));
@@ -306,12 +320,14 @@ namespace SuperHelper
 
         private string ObjectNameToDirectory(string str)
         {
-            return str.Replace("|", " _X_ ");
+            str = str.Replace("|", " _X_ ");
+            return str.Replace("/", " _S_ ");
         }
 
         private string DirectoryToObjectName(string str)
         {
-            return str.Replace(" _X_ ", "|");
+            str = str.Replace(" _X_ ", "|");
+            return str.Replace(" _S_ ", "/");
         }
 #endif
     }

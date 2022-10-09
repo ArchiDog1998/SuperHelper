@@ -83,7 +83,7 @@ namespace SuperHelper
                 var time = 7;
 #if DEBUG
                 time = 0;
-#endif
+#else
                 //Download for first.
                 if (now - LastDownloadURLTime > new TimeSpan(time, 0, 0, 0))
                 {
@@ -91,14 +91,14 @@ namespace SuperHelper
                     try
                     {
                         var bytes = client.DownloadData(@"https://raw.githubusercontent.com/ArchiDog1998/SuperHelper/master/urls.json");
-                        UrlDict = ser.Deserialize<Dictionary<string, string>>(Encoding.Default.GetString(bytes));
+                        UrlDict = ser.Deserialize<Dictionary<string, string>>(Encoding.UTF8.GetString(bytes));
                     }
                     catch
                     {
                         try
                         {
                             var bytes = client.DownloadData(@"https://gitee.com/ArchiTed1998/SuperHelper/raw/master/urls.json");
-                            UrlDict = ser.Deserialize<Dictionary<string, string>>(Encoding.Default.GetString(bytes));
+                            UrlDict = ser.Deserialize<Dictionary<string, string>>(Encoding.UTF8.GetString(bytes));
                         }
                         catch
                         {
@@ -109,14 +109,14 @@ namespace SuperHelper
                     try
                     {
                         var bytes = client.DownloadData(@"https://raw.githubusercontent.com/ArchiDog1998/SuperHelper/master/urlex.json");
-                        UrlExDict = ser.Deserialize<Dictionary<string, string[]>>(Encoding.Default.GetString(bytes));
+                        UrlExDict = ser.Deserialize<Dictionary<string, string[]>>(Encoding.UTF8.GetString(bytes));
                     }
                     catch
                     {
                         try
                         {
                             var bytes = client.DownloadData(@"https://gitee.com/ArchiTed1998/SuperHelper/raw/master/urlex.json");
-                            UrlExDict = ser.Deserialize<Dictionary<string, string[]>>(Encoding.Default.GetString(bytes));
+                            UrlExDict = ser.Deserialize<Dictionary<string, string[]>>(Encoding.UTF8.GetString(bytes));
                         }
                         catch
                         {
@@ -124,6 +124,7 @@ namespace SuperHelper
                         }
                     }
                 }
+#endif
 
 
                 if (File.Exists(_location))

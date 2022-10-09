@@ -79,13 +79,11 @@ namespace SuperHelper
             //Read from json.
             try
             {
-                var now = DateTime.Now;
-                var time = 7;
 #if DEBUG
-                time = 0;
 #else
+                var now = DateTime.Now;
                 //Download for first.
-                if (now - LastDownloadURLTime > new TimeSpan(time, 0, 0, 0))
+                if (now - LastDownloadURLTime > new TimeSpan(7, 0, 0, 0))
                 {
                     LastDownloadURLTime = now;
                     try
@@ -125,7 +123,6 @@ namespace SuperHelper
                     }
                 }
 #endif
-
 
                 if (File.Exists(_location))
                 {

@@ -83,7 +83,7 @@ namespace SuperHelper
 #else
                 var now = DateTime.Now;
                 //Download for first.
-                if (now - LastDownloadURLTime > new TimeSpan(7, 0, 0, 0))
+                if (now - LastDownloadURLTime > new TimeSpan(1, 0, 0, 0))
                 {
                     LastDownloadURLTime = now;
                     try

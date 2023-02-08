@@ -88,38 +88,22 @@ namespace SuperHelper
                     LastDownloadURLTime = now;
                     try
                     {
-                        var bytes = client.DownloadData(@"https://raw.githubusercontent.com/ArchiDog1998/SuperHelper/master/urls.json");
+                        var bytes = client.DownloadData(@"https://gitee.com/ArchiTed1998/SuperHelper/raw/master/urls.json");
                         UrlDict = ser.Deserialize<Dictionary<string, string>>(Encoding.UTF8.GetString(bytes));
                     }
                     catch
                     {
-                        try
-                        {
-                            var bytes = client.DownloadData(@"https://gitee.com/ArchiTed1998/SuperHelper/raw/master/urls.json");
-                            UrlDict = ser.Deserialize<Dictionary<string, string>>(Encoding.UTF8.GetString(bytes));
-                        }
-                        catch
-                        {
 
-                        }
                     }
 
                     try
                     {
-                        var bytes = client.DownloadData(@"https://raw.githubusercontent.com/ArchiDog1998/SuperHelper/master/urlex.json");
+                        var bytes = client.DownloadData(@"https://gitee.com/ArchiTed1998/SuperHelper/raw/master/urlex.json");
                         UrlExDict = ser.Deserialize<Dictionary<string, string[]>>(Encoding.UTF8.GetString(bytes));
                     }
                     catch
                     {
-                        try
-                        {
-                            var bytes = client.DownloadData(@"https://gitee.com/ArchiTed1998/SuperHelper/raw/master/urlex.json");
-                            UrlExDict = ser.Deserialize<Dictionary<string, string[]>>(Encoding.UTF8.GetString(bytes));
-                        }
-                        catch
-                        {
 
-                        }
                     }
                 }
 #endif

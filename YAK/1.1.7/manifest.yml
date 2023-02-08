@@ -1,0 +1,29 @@
+---
+name: SuperHelper
+version: 1.1.7
+authors:
+- 秋水
+description: >
+  Replace the default help in the component right-click menu to a new Super Helper window in WPF.
+  
+  
+  Super Helper window contains five tabs, namely Origin Help, URL Help, Params Help, Development Help and settings.
+  
+  
+  Origin Help is the default help in Grasshopper. URL Help can specify a web page for every document object. Params Help can show document object's properties and data in calculation. Development Help can find the document object's assembly file, and its extra properties.
+  
+  
+  1.1.7 Notes:
+  
+  1. Removed the saving of Helper Window into rhino file.
+
+url: https://www.food4rhino.com/en/app/super-helper
+keywords:
+- help
+- param
+- parameter
+- parameters
+- window
+- qiushui
+icon_url: "https://static.food4rhino.com/s3fs-public/styles/thumbnail/public/users-files/qiu-shui/app/superhelpericon256.png"
+

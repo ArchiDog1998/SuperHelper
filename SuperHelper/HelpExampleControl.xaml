@@ -29,7 +29,6 @@
 
             <Image DockPanel.Dock="Bottom" Source="{Binding Picture, Converter={StaticResource BitmapConverter}, UpdateSourceTrigger=PropertyChanged}"/>
 
-
             <TextBlock Margin="10" HorizontalAlignment="Center" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
                     Visibility="{Binding Description, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource StringVisibilityConverter}}"
                    TextWrapping="WrapWithOverflow"/>

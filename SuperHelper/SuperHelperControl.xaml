@@ -230,7 +230,6 @@
                         </local:StretchingTreeView>
                     </Border>
                 </DockPanel>
-
             </TabItem>
 
             <TabItem Header="Settings">

@@ -26,7 +26,6 @@ namespace SuperHelper
         {
             InitializeComponent();
         }
-
     }
 
     [ValueConversion(typeof(IGH_DocumentObject), typeof(Visibility))]

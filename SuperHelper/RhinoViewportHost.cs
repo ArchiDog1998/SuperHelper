@@ -39,10 +39,16 @@ namespace SuperHelper
             return base.ArrangeOverride(finalSize);
         }
 
+        const string ViewName = "Helper";
+
+        public static void RemoveNameView()
+        {
+            Rhino.RhinoDoc.ActiveDoc.Views.Find(ViewName, true)?.Close();
+        }
         protected override HandleRef BuildWindowCore(HandleRef hwndParent)
         {
-            var view = Rhino.RhinoDoc.ActiveDoc.Views.Find("Helper", true) ??
-                Rhino.RhinoDoc.ActiveDoc.Views.Add("Helper", DefinedViewportProjection.Perspective, new Rectangle(0, 0, 300, 200), true);
+            var view = Rhino.RhinoDoc.ActiveDoc.Views.Find(ViewName, true) ??
+                Rhino.RhinoDoc.ActiveDoc.Views.Add(ViewName, DefinedViewportProjection.Perspective, new Rectangle(0, 0, 300, 200), true);
             view.Floating = true;
 
             var form = new System.Windows.Forms.Form() { BackColor = Color.DarkGray};

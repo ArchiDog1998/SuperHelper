@@ -163,6 +163,8 @@ namespace SuperHelper
             };
 
             Rhino.RhinoDoc.EndOpenDocument += RhinoDoc_EndOpenDocument;
+            Rhino.RhinoDoc.BeginSaveDocument += RhinoDoc_BeginSaveDocument;
+            Rhino.RhinoDoc.EndSaveDocument += RhinoDoc_EndSaveDocument;
 
             _splitter.MouseDown += (sender, e) =>
             {
@@ -172,6 +174,16 @@ namespace SuperHelper
 #if DEBUG
             SaveExamplesToJson();
 #endif
+        }
+
+        private void RhinoDoc_EndSaveDocument(object sender, Rhino.DocumentSaveEventArgs e)
+        {
+            MenuReplacer._control.UpdateViewPortHost();
+        }
+
+        private void RhinoDoc_BeginSaveDocument(object sender, Rhino.DocumentSaveEventArgs e)
+        {
+            RhinoViewportHost.RemoveNameView();
         }
 
         private void RhinoDoc_EndOpenDocument(object sender, Rhino.DocumentOpenEventArgs e)
